@@ -1,0 +1,973 @@
+<title>Nicos Laufstart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root{
+    --bg:#F5F7F3; --surface:#FFFFFF; --surface-2:#EEF1EB;
+    --ink:#1B241E; --muted:#657065; --line:#DFE4DA;
+    --pine:#2F6B4F; --pine-soft:#E4EEE7;
+    --amber:#D96A22; --amber-soft:#FBEADD;
+    --shadow:0 1px 2px rgba(27,36,30,.05),0 8px 24px rgba(27,36,30,.06);
+    --shadow-lg:0 12px 40px rgba(27,36,30,.18);
+    --radius:14px;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+    --bg:#131813; --surface:#1B221B; --surface-2:#222A21;
+    --ink:#EAEEE7; --muted:#9AA79A; --line:#2E382E;
+    --pine:#63B58C; --pine-soft:#1E2E25;
+    --amber:#E8925A; --amber-soft:#33241A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
+    --shadow-lg:0 16px 46px rgba(0,0,0,.55);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#131813; --surface:#1B221B; --surface-2:#222A21;
+    --ink:#EAEEE7; --muted:#9AA79A; --line:#2E382E;
+    --pine:#63B58C; --pine-soft:#1E2E25;
+    --amber:#E8925A; --amber-soft:#33241A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
+    --shadow-lg:0 16px 46px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);
+    font-family:"Barlow",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:"Barlow Condensed","Barlow",system-ui,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+  p{margin:0 0 1em;max-width:66ch}
+  strong{font-weight:600}
+  button{font-family:inherit}
+  .tnum{font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.16em;font-weight:600;font-size:.78rem;color:var(--pine)}
+
+  /* ---------- Header + Nav ---------- */
+  .appbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line)}
+  .appbar-inner{max-width:960px;margin:0 auto;padding:12px 18px 0}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .brand .mark{width:30px;height:30px;border-radius:9px;background:var(--pine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex:none}
+  .brand b{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.32rem;letter-spacing:.01em}
+  .brand span{color:var(--muted);font-size:.82rem;margin-left:auto;text-align:right;line-height:1.2}
+  nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  .tab{appearance:none;border:0;background:none;cursor:pointer;white-space:nowrap;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:1.02rem;letter-spacing:.02em;
+    color:var(--muted);padding:9px 14px 12px;border-bottom:2.5px solid transparent;transition:color .15s}
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--pine);border-bottom-color:var(--pine)}
+  .tab:focus-visible{outline:2px solid var(--pine);outline-offset:-2px;border-radius:6px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:26px 18px 90px}
+  .view[hidden]{display:none}
+  .view h2.sec{font-size:clamp(1.6rem,4vw,2.15rem);font-weight:700;margin:6px 0 4px}
+  .lead{color:var(--muted);font-size:1.04rem;margin-bottom:20px;max-width:64ch}
+  section.block{margin-top:44px}
+  section.block:first-of-type{margin-top:8px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
+
+  /* ---------- HEUTE ---------- */
+  .picker{display:flex;flex-direction:column;gap:16px;margin-bottom:22px}
+  .picker .label{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;font-weight:600;color:var(--muted);margin-bottom:7px;display:block}
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .dbtn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:9px 0;cursor:pointer;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:.95rem;color:var(--ink);transition:.12s;position:relative}
+  .dbtn:hover{border-color:var(--pine)}
+  .dbtn[aria-pressed="true"]{background:var(--pine);border-color:var(--pine);color:#fff}
+  .dbtn.today::after{content:"";position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+  .dbtn[aria-pressed="true"].today::after{background:#fff}
+  .weeks{display:flex;flex-wrap:wrap;gap:6px}
+  .wbtn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 12px;cursor:pointer;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:.9rem;color:var(--ink);transition:.12s;font-variant-numeric:tabular-nums}
+  .wbtn:hover{border-color:var(--amber)}
+  .wbtn[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#fff}
+  .dbtn:focus-visible,.wbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  .todaycard{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:12px}
+  .todaycard .head{padding:16px 20px;display:flex;align-items:center;gap:12px}
+  .todaycard .head .kicker{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:600;opacity:.9}
+  .todaycard .head h3{font-size:1.7rem;font-weight:700;margin-top:2px}
+  .todaycard .head .ic{margin-left:auto;font-size:1.9rem;line-height:1}
+  .todaycard.k-runA .head,.todaycard.k-strength .head{background:var(--pine-soft);color:var(--pine)}
+  .todaycard.k-runB .head{background:var(--amber-soft);color:var(--amber)}
+  .todaycard.k-walk .head,.todaycard.k-active .head,.todaycard.k-rest .head{background:var(--surface-2);color:var(--ink)}
+  .todaycard .body{background:var(--surface);padding:16px 20px}
+  .todaycard .body p{margin:0 0 10px}
+  .todaycard .body p:last-child{margin:0}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:999px;padding:4px 11px;font-size:.85rem;font-weight:500;margin:2px 6px 2px 0}
+  .pill.b{background:var(--pine-soft);color:var(--pine)}
+
+  .mealrow{margin-top:22px}
+  .mealrow > .label{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;font-weight:600;color:var(--muted);margin:0 0 10px}
+  .meal-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:720px){.meal-cats{grid-template-columns:1fr}}
+  .mcat h4{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.15rem;margin:0 0 3px}
+  .mcat .when{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .optlist{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+  .optbtn{appearance:none;text-align:left;width:100%;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:11px;
+    padding:11px 13px;display:flex;align-items:center;gap:10px;transition:.13s;color:var(--ink)}
+  .optbtn:hover{border-color:var(--pine);box-shadow:var(--shadow);transform:translateY(-1px)}
+  .optbtn:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  .optbtn .oname{font-weight:600;font-size:.95rem;line-height:1.2}
+  .optbtn .okcal{margin-left:auto;font-size:.78rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;flex:none}
+  .optbtn .arw{color:var(--pine);flex:none;font-size:1.05rem;transition:transform .13s}
+  .optbtn:hover .arw{transform:translateX(2px)}
+
+  /* ---------- generic reused bits ---------- */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .day{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;min-height:104px;display:flex;flex-direction:column;gap:5px}
+  .day .dname{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;color:var(--muted)}
+  .day .act{font-weight:600;font-size:.9rem;line-height:1.15}
+  .day .tag{font-size:.7rem;color:var(--muted);margin-top:auto}
+  .day.run{background:var(--pine-soft);border-color:transparent}.day.run .act{color:var(--pine)}
+  .day.speed{background:var(--amber-soft);border-color:transparent}.day.speed .act{color:var(--amber)}
+  .day.strength{border-style:dashed}
+  @media(max-width:640px){.week{grid-template-columns:repeat(2,1fr)}.day{min-height:0}}
+
+  .sessions{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.sessions{grid-template-columns:1fr}}
+  .stype .badge{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:inline-block;padding:3px 10px;border-radius:6px;margin-bottom:10px}
+  .stype.a .badge{background:var(--pine);color:#fff}.stype.b .badge{background:var(--amber);color:#fff}
+  .stype h3{font-size:1.35rem;font-weight:600;margin-bottom:4px}
+  .stype .note{color:var(--muted);font-size:.92rem}
+  .interval{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:3px}
+  .interval li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dotted var(--line);font-size:.94rem}
+  .interval li:last-child{border-bottom:0}
+  .interval .val{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .interval .fast{color:var(--amber);font-weight:600}
+
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:520px;background:var(--surface)}
+  th,td{padding:11px 15px;text-align:left;font-size:.94rem;border-bottom:1px solid var(--line)}
+  thead th{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.07em;font-size:.8rem;color:var(--muted);font-weight:600;background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:0}
+  td.wk{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.05rem;color:var(--pine)}
+  td .km{font-variant-numeric:tabular-nums;font-weight:600}
+  tr.phase-line td{background:var(--pine-soft);color:var(--pine);font-family:"Barlow Condensed",sans-serif;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:.78rem;padding:8px 15px}
+  tr.active-week td{box-shadow:inset 3px 0 0 var(--amber)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .ex .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .ex h3{font-size:1.12rem;font-weight:600}
+  .ex .dose{font-family:"Barlow Condensed",sans-serif;font-weight:700;color:var(--amber);white-space:nowrap;font-size:1.02rem}
+  .ex p{font-size:.89rem;color:var(--muted);margin:6px 0 0;max-width:none}
+
+  .callout{background:var(--surface-2);border-left:3px solid var(--pine);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:16px}
+  .callout .eyebrow{color:var(--amber)}
+  .callout p{margin:4px 0 0;font-size:.94rem;color:var(--ink);max-width:none}
+
+  .tips{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+  .tips li{display:flex;gap:12px;align-items:flex-start;font-size:.98rem}
+  .tips li .mk{flex:none;width:24px;height:24px;border-radius:7px;background:var(--pine);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:"Barlow Condensed",sans-serif;margin-top:1px}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
+
+  /* ---------- Modal ---------- */
+  .backdrop{position:fixed;inset:0;background:rgba(15,22,17,.55);backdrop-filter:blur(2px);z-index:60;display:flex;align-items:flex-end;justify-content:center;padding:0}
+  @media(min-width:640px){.backdrop{align-items:center;padding:24px}}
+  .backdrop[hidden]{display:none}
+  .modal{background:var(--surface);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:18px 18px 0 0;box-shadow:var(--shadow-lg)}
+  @media(min-width:640px){.modal{border-radius:18px}}
+  .modal .mhead{position:sticky;top:0;background:var(--surface);padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+  .modal .mtag{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;font-weight:600;color:var(--pine)}
+  .modal h3{font-size:1.6rem;font-weight:700;margin:3px 0 0;padding-right:40px}
+  .modal .close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;line-height:1}
+  .modal .close:hover{background:var(--surface-2)}
+  .modal .close:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  .modal .mbody{padding:18px 22px 26px}
+  .macros{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .macro{background:var(--surface-2);border-radius:10px;padding:8px 14px;text-align:center;min-width:88px}
+  .macro .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.25rem;color:var(--ink);font-variant-numeric:tabular-nums}
+  .macro .k{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .mblock-title{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.09em;font-size:.78rem;font-weight:600;color:var(--muted);margin:0 0 8px}
+  .ingr{list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:2px}
+  .ingr li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dotted var(--line);font-size:.95rem}
+  .ingr li:last-child{border-bottom:0}
+  .ingr .amt{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:500}
+  .steps{padding:0;margin:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+  .steps li{position:relative;padding-left:38px;font-size:.96rem;line-height:1.5}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-1px;width:26px;height:26px;border-radius:50%;background:var(--pine);color:#fff;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center}
+  .modal .fresh{margin-top:20px;background:var(--pine-soft);border-radius:10px;padding:11px 14px;font-size:.86rem;color:var(--pine)}
+
+  .dbtn{display:flex;flex-direction:column;gap:1px;line-height:1.12;padding:8px 2px}
+  .dbtn .d1{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.98rem}
+  .dbtn .d2{font-size:.64rem;opacity:.72;font-variant-numeric:tabular-nums}
+  .flabel{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;font-weight:600;color:var(--muted);display:block;margin-bottom:8px}
+
+  /* ---------- Übersicht (Schedule) ---------- */
+  .sched{display:flex;flex-direction:column;gap:14px}
+  .sday{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .sday .shead{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .sday .shead .dow{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.18rem}
+  .sday .shead .dt{color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+  .sday .shead .wtag{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;padding:3px 10px;border-radius:6px}
+  .wtag.run{background:var(--pine-soft);color:var(--pine)}
+  .wtag.speed{background:var(--amber-soft);color:var(--amber)}
+  .wtag.rest{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+  .sday .sbody{padding:4px 18px 12px}
+  .srow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--line);flex-wrap:wrap}
+  .srow:last-child{border-bottom:0}
+  .srow .rk{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.07em;font-size:.72rem;font-weight:600;color:var(--muted);min-width:92px;flex:none}
+  .srow .rc{font-size:.96rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .linkchip,.mealchip{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:.9rem;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:6px;transition:.12s}
+  .linkchip:hover,.mealchip:hover{border-color:var(--pine);transform:translateY(-1px)}
+  .linkchip.sport{background:var(--pine-soft);border-color:transparent;color:var(--pine)}
+  .linkchip.sport.speed{background:var(--amber-soft);color:var(--amber)}
+  .mealchip .arw{color:var(--pine);font-size:1.05rem}
+  .linkchip .arw{font-size:1.05rem}
+  .linkchip:focus-visible,.mealchip:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+
+  /* ---------- Einkaufsliste ---------- */
+  .shop-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .shop-controls label{display:flex;flex-direction:column;gap:6px;font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.74rem;font-weight:600;color:var(--muted)}
+  .shop-controls select,.shop-controls input{font-family:"Barlow",sans-serif;font-size:.98rem;font-weight:500;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .shop-controls select{min-width:240px;max-width:100%}
+  .shop-controls input{width:92px;font-variant-numeric:tabular-nums}
+  .shop-btn{appearance:none;border:0;background:var(--pine);color:#fff;font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.03em;font-size:1.02rem;padding:11px 22px;border-radius:10px;cursor:pointer}
+  .shop-btn:hover{filter:brightness(1.06)}
+  .shop-btn:focus-visible,.shop-controls select:focus-visible,.shop-controls input:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  .shop-result{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+  .shop-result h4{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.18rem;margin:0 0 12px}
+  .shop-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2px}
+  .shop-list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dotted var(--line);font-size:.96rem}
+  .shop-list li:last-child{border-bottom:0}
+  .shop-list .amt{color:var(--pine);font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
+  .shop-btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .shop-btn.ghost:hover{filter:none;border-color:var(--pine);color:var(--pine)}
+  .cl-head{display:flex;align-items:center;gap:10px;margin:20px 0 6px}
+  .cl-title{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.09em;font-size:.82rem;font-weight:700;color:var(--pine)}
+  .cl-head.done .cl-title{color:var(--muted)}
+  .cl-count{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.8rem;background:var(--pine-soft);color:var(--pine);border-radius:999px;padding:1px 10px;font-variant-numeric:tabular-nums}
+  .cl-head.done .cl-count{background:var(--surface-2);color:var(--muted)}
+  .check-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1px}
+  .check-list li{border-bottom:1px dotted var(--line)}
+  .check-list li:last-child{border-bottom:0}
+  .check-list label{display:flex;align-items:center;gap:12px;padding:11px 2px;cursor:pointer;font-size:.96rem}
+  .check-list input{width:20px;height:20px;accent-color:var(--pine);flex:none;cursor:pointer;margin:0}
+  .check-list .ci-name{flex:1}
+  .check-list .ci-amt{color:var(--pine);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .check-list.have .ci-name{text-decoration:line-through;color:var(--muted)}
+  .check-list.have .ci-amt{color:var(--muted)}
+  .cl-empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .optbtn:hover{transform:none}
+    *{transition:none!important}
+  }
+</style>
+
+<div class="appbar">
+  <div class="appbar-inner">
+    <div class="brand">
+      <span class="mark">🏃</span>
+      <b>Nicos Laufstart</b>
+      <span>8‑Wochen‑Plan<br>vegetarisch · ohne Geräte</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Bereiche">
+      <button class="tab" role="tab" data-view="heute" aria-selected="true">Heute</button>
+      <button class="tab" role="tab" data-view="uebersicht" aria-selected="false">Übersicht</button>
+      <button class="tab" role="tab" data-view="plan" aria-selected="false">Wochenplan</button>
+      <button class="tab" role="tab" data-view="training" aria-selected="false">Kraft &amp; Bauch</button>
+      <button class="tab" role="tab" data-view="ernaehrung" aria-selected="false">Ernährung</button>
+      <button class="tab" role="tab" data-view="einkauf" aria-selected="false">Einkaufsliste</button>
+      <button class="tab" role="tab" data-view="tipps" aria-selected="false">Tipps</button>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ HEUTE ============ -->
+  <div class="view" id="view-heute" role="tabpanel">
+    <span class="eyebrow">Dein Tag</span>
+    <h2 class="sec">Heute</h2>
+    <p class="lead" id="today-date"></p>
+
+    <div class="picker">
+      <div>
+        <span class="label">Tag im Plan wählen · Fr 04.09. – Do 10.09.</span>
+        <div class="days" id="day-picker"></div>
+      </div>
+    </div>
+
+    <div id="today-out"></div>
+
+    <div class="mealrow">
+      <p class="label">Dein Essen an diesem Tag — tippe für das Rezept (weitere Optionen im Tab „Ernährung“)</p>
+      <div class="meal-cats" id="today-meals"></div>
+    </div>
+  </div>
+
+  <!-- ============ ÜBERSICHT ============ -->
+  <div class="view" id="view-uebersicht" role="tabpanel" hidden>
+    <span class="eyebrow">Dein Ablauf · Fr 04.09. – Do 10.09.</span>
+    <h2 class="sec">Große Übersicht</h2>
+    <p class="lead">Dein kompletter Tagesablauf für die kommende Woche: morgens Banane und Sport, dann die drei Mahlzeiten. Tippe die <strong>Sport-Einheit</strong> an, um zu den Details zu springen, oder eine <strong>Mahlzeit</strong> für das Rezept. Mittag- &amp; Abendessen sind Vorschläge — frei tauschbar.</p>
+    <div class="sched" id="uebersicht-out"></div>
+    <div class="callout">
+      <span class="eyebrow">Beim Morgentraining</span>
+      <p>Reihenfolge: 🍌 1 Banane → Sport → duschen → Frühstück. Das Frühstück ist gleichzeitig deine Erholungsmahlzeit — du isst also <strong>nicht</strong> zweimal.</p>
+    </div>
+  </div>
+
+  <!-- ============ WOCHENPLAN ============ -->
+  <div class="view" id="view-plan" role="tabpanel" hidden>
+    <span class="eyebrow">So läuft die Woche</span>
+    <h2 class="sec">Wochenplan &amp; Aufbau</h2>
+    <p class="lead">Immer ein Ruhetag zwischen zwei Läufen — dein „jeden zweiten Tag“. Die Läufe wechseln zwischen <strong>Einheit A</strong> (locker durchlaufen) und <strong>Einheit B</strong> (Intervalle). Kurzes Bauch‑Training 3× direkt angehängt, an freien Tagen ein zügiger Spaziergang.</p>
+
+    <div class="week">
+      <div class="day run"><span class="dname">Mo</span><span class="act">Lauf A</span><span class="tag">+ Bauch</span></div>
+      <div class="day"><span class="dname">Di</span><span class="act">Spaziergang</span><span class="tag">30–40 Min</span></div>
+      <div class="day speed"><span class="dname">Mi</span><span class="act">Lauf B</span><span class="tag">+ Bauch</span></div>
+      <div class="day strength"><span class="dname">Do</span><span class="act">Kraft</span><span class="tag">+ Bauch</span></div>
+      <div class="day run"><span class="dname">Fr</span><span class="act">Lauf A</span><span class="tag">Dauerlauf</span></div>
+      <div class="day"><span class="dname">Sa</span><span class="act">Aktiv</span><span class="tag">Gehen / Rad</span></div>
+      <div class="day strength"><span class="dname">So</span><span class="act">Kraft</span><span class="tag">leicht / optional</span></div>
+    </div>
+    <div class="callout">
+      <span class="eyebrow">Bewegung im Alltag zählt</span>
+      <p>Beim Abnehmen macht der Alltag viel aus: Ziel ~<strong>8.000–10.000 Schritte</strong> am Tag, Treppe statt Aufzug. Bei Müdigkeit lieber einen Ruhetag als eine Verletzung.</p>
+    </div>
+
+    <section class="block">
+      <span class="eyebrow">Die zwei Laufarten</span>
+      <h2 class="sec">Einheit A &amp; B</h2>
+      <div class="sessions">
+        <div class="card stype a">
+          <span class="badge">Einheit A</span>
+          <h3>Dauerlauf</h3>
+          <p class="note">Am Stück durchlaufen, ohne Gehpause. Tempo locker (~9–10&nbsp;km/h) — du solltest noch reden können.</p>
+          <ul class="interval">
+            <li><span>Einlaufen (gehen)</span><span class="val">3–5 Min · 6 km/h</span></li>
+            <li><span>Locker joggen am Stück</span><span class="val">Distanz s. Tabelle</span></li>
+            <li><span>Auslaufen (gehen)</span><span class="val">3 Min · 6 km/h</span></li>
+          </ul>
+        </div>
+        <div class="card stype b">
+          <span class="badge">Einheit B</span>
+          <h3>Intervalle</h3>
+          <p class="note">Deine bekannte Einheit als feste Struktur. Ab Woche 3 kommt eine zweite Tempo‑Passage dazu.</p>
+          <ul class="interval">
+            <li><span>Einlaufen</span><span class="val">100 m · 6 km/h</span></li>
+            <li><span>Joggen</span><span class="val">1000 m · 10 km/h</span></li>
+            <li><span>Trab-Pause</span><span class="val">100 m · 6 km/h</span></li>
+            <li><span>Joggen</span><span class="val">1200 m · 10 km/h</span></li>
+            <li><span>Trab-Pause</span><span class="val">100 m · 6 km/h</span></li>
+            <li><span>Joggen</span><span class="val">100 m · 10 km/h</span></li>
+            <li><span class="fast">Schnell</span><span class="val fast">300 m · 12 km/h</span></li>
+            <li><span>Ausjoggen</span><span class="val">100 m · 10 km/h</span></li>
+            <li><span class="fast">(+ ab W3) Schnell</span><span class="val fast">200 m · 12 km/h</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <span class="eyebrow">8 Wochen Aufbau</span>
+      <h2 class="sec">Der Laufplan</h2>
+      <p class="lead">Die Distanz in <strong>Einheit A</strong> wächst Schritt für Schritt (max. ~10&nbsp;% pro Woche). Steiger dich nur, wenn sich die Vorwoche gut angefühlt hat. Deine gewählte Woche ist markiert.</p>
+      <div style="margin-bottom:16px">
+        <span class="flabel">Aktuelle Trainingswoche (markiert die Zeile)</span>
+        <div class="weeks" id="week-picker"></div>
+      </div>
+      <div class="tablewrap">
+        <table id="plan-table">
+          <thead><tr><th>Woche</th><th>Einheit A — durchlaufen</th><th>Einheit B</th><th>Kraft</th></tr></thead>
+          <tbody id="plan-tbody"></tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <span class="eyebrow">Faustregel</span>
+        <p>Fühlt sich eine Woche schwer an? Wiederhole sie einfach, bevor du weitergehst — der Plan läuft dir nicht weg.</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <span class="eyebrow">Immer zuerst · 5 Minuten</span>
+      <h2 class="sec">Warm-up vor jedem Lauf</h2>
+      <ul class="tips">
+        <li><span class="mk">1</span><span><strong>Lockeres Traben auf der Stelle</strong> — 1–2 Minuten warm werden.</span></li>
+        <li><span class="mk">2</span><span><strong>Beinschwingen</strong> vor/zurück und seitlich, je 10× pro Bein.</span></li>
+        <li><span class="mk">3</span><span><strong>Hüftkreisen &amp; Knie hochziehen</strong> im Gehen, ~30 Sekunden.</span></li>
+        <li><span class="mk">4</span><span><strong>Anfersen &amp; Fußgelenke kreisen</strong>, Waden &amp; Sprunggelenk wecken.</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============ TRAINING ============ -->
+  <div class="view" id="view-training" role="tabpanel" hidden>
+    <span class="eyebrow">2× pro Woche · nur Körpergewicht</span>
+    <h2 class="sec">Kraftzirkel ohne Geräte</h2>
+    <p class="lead">Ein Durchgang aller Übungen = eine Runde. Mach <strong>2–3 Runden</strong> mit ~60&nbsp;Sekunden Pause. Am besten an einem Ruhetag oder nach einem lockeren Lauf — nie direkt vor Einheit B.</p>
+    <div class="grid">
+      <div class="ex"><div class="top"><h3>Kniebeugen</h3><span class="dose">3 × 12</span></div><p>Füße schulterbreit, Po nach hinten wie zum Hinsetzen, Rücken gerade. Oberschenkel &amp; Po.</p></div>
+      <div class="ex"><div class="top"><h3>Ausfallschritte</h3><span class="dose">3 × 10/Bein</span></div><p>Großer Schritt nach vorne, hinteres Knie Richtung Boden. Beinkraft &amp; Balance.</p></div>
+      <div class="ex"><div class="top"><h3>Liegestütze</h3><span class="dose">3 × 8–12</span></div><p>Geht auch auf den Knien. Körper gerade wie ein Brett. Brust, Arme, Rumpf.</p></div>
+      <div class="ex"><div class="top"><h3>Beckenheben</h3><span class="dose">3 × 15</span></div><p>Auf dem Rücken, Füße aufstellen, Po nach oben drücken. Po &amp; unterer Rücken.</p></div>
+      <div class="ex"><div class="top"><h3>Wadenheben</h3><span class="dose">3 × 20</span></div><p>Im Stehen auf die Zehenspitzen und langsam ab. Laufkraft in den Waden.</p></div>
+      <div class="ex"><div class="top"><h3>Unterarmstütz</h3><span class="dose">3 × 30–45 s</span></div><p>Auf Unterarmen &amp; Zehen, Körper gerade, Bauch fest. Bester Rumpf-Stabilisator.</p></div>
+    </div>
+
+    <section class="block">
+      <span class="eyebrow">3× pro Woche · ~8–10 Minuten</span>
+      <h2 class="sec">Bauch &amp; Core — Richtung Sixpack</h2>
+      <p class="lead">Häng diesen Block direkt an die Läufe (Mo/Mi) und den Kraft-Tag (Do). <strong>2 Runden</strong>, ~45&nbsp;Sekunden Pause. Ruhig und kontrolliert.</p>
+      <div class="grid">
+        <div class="ex"><div class="top"><h3>Crunches</h3><span class="dose">3 × 15</span></div><p>Schultern langsam anheben, Bauch anspannen, nicht am Kopf ziehen. Obere Bauchmuskeln.</p></div>
+        <div class="ex"><div class="top"><h3>Beinheben</h3><span class="dose">3 × 12</span></div><p>Beine gestreckt langsam heben &amp; senken, Rücken bleibt am Boden. Untere Bauchmuskeln.</p></div>
+        <div class="ex"><div class="top"><h3>Käfer (Dead Bug)</h3><span class="dose">3 × 12/Seite</span></div><p>Gegenüberliegenden Arm &amp; Bein ausstrecken, wechseln. Tiefenmuskulatur, schonend.</p></div>
+        <div class="ex"><div class="top"><h3>Russian Twist</h3><span class="dose">3 × 20</span></div><p>Zurücklehnen, Füße anheben, Oberkörper drehen. Seitliche Bauchmuskeln.</p></div>
+        <div class="ex"><div class="top"><h3>Seitlicher Stütz</h3><span class="dose">3 × 25 s/Seite</span></div><p>Seitlich auf Unterarm, Hüfte hoch, Körper gerade. Schräge Bauch- &amp; Rumpfmuskeln.</p></div>
+        <div class="ex"><div class="top"><h3>Mountain Climbers</h3><span class="dose">3 × 30 s</span></div><p>In Liegestützposition Knie zügig zur Brust ziehen. Bauch + Herz-Kreislauf-Boost.</p></div>
+      </div>
+      <div class="callout">
+        <span class="eyebrow">Danach dehnen</span>
+        <p>Nach Lauf und Kraft 3–5 Minuten dehnen: Waden, Oberschenkel vorne &amp; hinten, Hüftbeuger — je ~20–30&nbsp;Sekunden ruhig halten, nicht wippen. Und dran denken: die Bauchmuskeln werden durch das Kaloriendefizit sichtbar.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ ERNÄHRUNG ============ -->
+  <div class="view" id="view-ernaehrung" role="tabpanel" hidden>
+    <span class="eyebrow">Einfach · vegetarisch · leichtes Defizit</span>
+    <h2 class="sec">Ernährung</h2>
+    <p class="lead">Tippe eine Mahlzeit an, um das komplette Rezept mit Mengen und Zubereitung zu sehen. Gemüse jeweils <strong>frisch, gewaschen, klein geschnitten und in 1&nbsp;EL Öl in der Pfanne angebraten</strong> (~5–8&nbsp;Min, mittlere Hitze).</p>
+
+    <div class="grid" style="margin-bottom:8px">
+      <div class="ex"><div class="top"><h3>Tempo beim Abnehmen</h3><span class="dose">0,5–1 kg/Wo</span></div><p>10 kg in 8 Wochen wären extrem und selten haltbar. Ziel: <strong>4–8 kg in 8 Wochen</strong> — die bleiben dann weg.</p></div>
+      <div class="ex"><div class="top"><h3>Woher das Sixpack kommt</h3><span class="dose">Fett ↓</span></div><p>Sichtbar wird der Bauch, wenn der Körperfettanteil sinkt. Der Ernährungsplan ist dafür der wichtigste Hebel.</p></div>
+    </div>
+
+    <div class="callout" style="margin-bottom:26px">
+      <span class="eyebrow">Die Teller-Regel · Defizit ohne Zählen</span>
+      <p><strong>½ Teller Gemüse/Salat · ¼ Eiweiß · ¼ Kohlenhydrate.</strong> Eiweiß bei jeder Mahlzeit. Größter Hebel: Softdrinks, Säfte, Alkohol &amp; Knabberzeug stark reduzieren. Ein Glas Wasser vor jeder Mahlzeit macht satt. Die kcal‑Angaben in den Rezepten sind grobe Richtwerte.</p>
+    </div>
+
+    <div class="callout" style="margin-bottom:8px">
+      <span class="eyebrow">Tipp</span>
+      <p>Eine fertige, abhakbare Einkaufsliste für die ganze Woche findest du im eigenen Tab <strong>„Einkaufsliste“</strong>.</p>
+    </div>
+
+    <section class="block" style="margin-top:0">
+      <span class="eyebrow">Morgens</span>
+      <h2 class="sec">Frühstück</h2>
+      <div class="optlist" data-cat="fruehstueck" style="margin-top:12px"></div>
+    </section>
+    <section class="block">
+      <span class="eyebrow">Mittags</span>
+      <h2 class="sec">Mittagessen</h2>
+      <div class="optlist" data-cat="mittag" style="margin-top:12px"></div>
+    </section>
+    <section class="block">
+      <span class="eyebrow">Abends</span>
+      <h2 class="sec">Abendessen</h2>
+      <div class="optlist" data-cat="abend" style="margin-top:12px"></div>
+    </section>
+
+    <div class="grid" style="margin-top:26px">
+      <div class="ex"><div class="top"><h3>Snacks</h3><span class="dose">1–2/Tag</span></div><p>Mit Eiweiß: <strong>150&nbsp;g</strong> Naturjoghurt/Skyr · <strong>100&nbsp;g</strong> Hüttenkäse · <strong>1</strong> Apfel · <strong>100&nbsp;g</strong> Gemüsesticks · <strong>20&nbsp;g</strong> Nüsse.</p></div>
+      <div class="ex"><div class="top"><h3>Trinken</h3><span class="dose">~2–2,5 L</span></div><p>Wasser &amp; ungesüßter Tee über den Tag. Softdrinks und Säfte weglassen.</p></div>
+    </div>
+    <div class="callout">
+      <span class="eyebrow">Rund um den Lauf</span>
+      <p><strong>Vorher</strong> (1–2 Std.): <strong>1</strong> Banane (~120&nbsp;g) oder <strong>1</strong> Scheibe Brot. <strong>Nachher</strong> (~1 Std.): <strong>250&nbsp;g</strong> Quark mit <strong>100&nbsp;g</strong> Obst oder <strong>250&nbsp;ml</strong> Milch. Trotz Abnehmen nicht komplett hungern.</p>
+    </div>
+  </div>
+
+  <!-- ============ EINKAUFSLISTE ============ -->
+  <div class="view" id="view-einkauf" role="tabpanel" hidden>
+    <span class="eyebrow">Zum Abhaken</span>
+    <h2 class="sec">Einkaufsliste</h2>
+    <p class="lead">Hake ab, was du schon zu Hause hast — abgehakte Zutaten rutschen automatisch nach unten unter „Schon vorhanden". Oben bleibt übersichtlich, was du noch besorgen musst. Deine Haken werden auf diesem Gerät gespeichert.</p>
+
+    <section class="block" id="weekshop" style="margin-top:0">
+      <span class="eyebrow">Woche 1 · Fr 04.09. – Do 10.09.</span>
+      <h2 class="sec" style="font-size:1.5rem">Ganze Woche</h2>
+      <p class="lead">Alle Zutaten für Frühstück, Mittag- und Abendessen der Woche, automatisch zusammengezählt.</p>
+      <div class="card">
+        <div class="shop-controls">
+          <label>Personen<input id="weekshop-persons" type="number" min="1" max="20" value="1"></label>
+          <button id="weekshop-go" class="shop-btn" type="button">Aktualisieren</button>
+          <button id="weekshop-reset" class="shop-btn ghost" type="button">Haken zurücksetzen</button>
+        </div>
+        <div id="weekshop-out"></div>
+      </div>
+    </section>
+
+    <section class="block" id="shop">
+      <span class="eyebrow">Einzelnes Gericht</span>
+      <h2 class="sec" style="font-size:1.5rem">Nur ein Rezept</h2>
+      <p class="lead">Für einen einzelnen Einkauf: ein Gericht und die Personenzahl wählen.</p>
+      <div class="card">
+        <div class="shop-controls">
+          <label>Gericht<select id="shop-meal"></select></label>
+          <label>Personen<input id="shop-persons" type="number" min="1" max="20" value="2"></label>
+          <button id="shop-go" class="shop-btn" type="button">Berechnen</button>
+        </div>
+        <div id="shop-out"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ TIPPS ============ -->
+  <div class="view" id="view-tipps" role="tabpanel" hidden>
+    <span class="eyebrow">Damit es dranbleibt</span>
+    <h2 class="sec">Kurz &amp; wichtig</h2>
+    <ul class="tips">
+      <li><span class="mk">✓</span><span><strong>Locker starten.</strong> Wenn du beim Dauerlauf noch reden kannst, ist das Tempo richtig. Zu schnell anfangen ist der häufigste Anfängerfehler.</span></li>
+      <li><span class="mk">✓</span><span><strong>Ruhetage sind Trainingstage.</strong> Muskeln und Sehnen werden in der Pause stärker.</span></li>
+      <li><span class="mk">✓</span><span><strong>Auf den Körper hören.</strong> Muskelkater ist ok, echter Schmerz (Gelenke, Sehnen) ist ein Stopp‑Signal.</span></li>
+      <li><span class="mk">✓</span><span><strong>Die Waage schwankt.</strong> Wiege dich höchstens 1× pro Woche, morgens. Der Trend über Wochen zählt, nicht der einzelne Tag.</span></li>
+      <li><span class="mk">✓</span><span><strong>Schlaf zählt.</strong> 7–8 Stunden bringen dich weiter als jede zusätzliche Einheit.</span></li>
+      <li><span class="mk">✓</span><span><strong>Dranbleiben schlägt Perfektion.</strong> Eine verpasste Einheit oder ein Essen „daneben“ ist egal — mach mit der nächsten weiter.</span></li>
+    </ul>
+    <footer>
+      Persönlicher Trainings- &amp; Ernährungsplan für Nico · 8‑Wochen‑Aufbau ab September 2026 · Laufen + Kraft &amp; Core ohne Geräte · vegetarisch mit leichtem Defizit.<br>
+      Allgemeine Fitness-Empfehlungen, kein medizinischer Rat. Bei starkem Abnehmwunsch, Vorerkrankungen oder anhaltenden Beschwerden vorher kurz ärztlich abklären lassen.
+    </footer>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="backdrop" id="backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="mhead">
+      <span class="mtag" id="m-tag"></span>
+      <h3 id="m-title"></h3>
+      <button class="close" id="m-close" aria-label="Schließen">✕</button>
+    </div>
+    <div class="mbody" id="m-body"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- DATA ---------- */
+  var WEEK_A = ["2,0 km","2,5 km","3,0 km","3,5 km","4,0 km","4,5 km","5,0 km","5,0 km locker"];
+  var WEEK_B = ["Grund-Intervall","Grund-Intervall","+ 200 m Tempo","+ 200 m Tempo","2. Tempo → 300 m","2× 300 m Tempo","2× 300 m Tempo","frei: A oder B"];
+  var WEEK_K = ["2×","2×","2×","2×","2×","2×","1–2×","1×"];
+  var PHASES = {0:"Phase 1 · Fundament",2:"Phase 2 · Ausbau",5:"Phase 3 · Ziel 5 km"};
+
+  var DAY_PLAN = [
+    {k:"Mo",l:"Montag",   kind:"runA",  bauch:true},
+    {k:"Di",l:"Dienstag", kind:"walk"},
+    {k:"Mi",l:"Mittwoch", kind:"runB",  bauch:true},
+    {k:"Do",l:"Donnerstag",kind:"strength",bauch:true},
+    {k:"Fr",l:"Freitag",  kind:"runA"},
+    {k:"Sa",l:"Samstag",  kind:"active"},
+    {k:"So",l:"Sonntag",  kind:"rest"}
+  ];
+
+  var MEALS = {
+    fruehstueck: [
+      {id:"f1",name:"Quark-Beeren-Bowl",kcal:400,protein:40,
+       ingr:[["Magerquark","250 g"],["Beeren (frisch od. TK)","100 g"],["Haferflocken","40 g"],["Nüsse","15 g"]],
+       steps:["Magerquark in eine Schüssel geben.","Haferflocken unterrühren.","Beeren waschen und dazugeben.","Nüsse grob hacken und darüberstreuen."]},
+      {id:"f2",name:"Rührei mit Paprika & Tomate",kcal:420,protein:32,fresh:"Paprika & Tomate: waschen, klein würfeln, in 1 EL Öl ~5 Min anbraten.",
+       ingr:[["Eier","4 Stück"],["Paprika (frisch)","1 (~150 g)"],["Tomate (frisch)","1 (~100 g)"],["Öl","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Paprika und Tomate waschen und klein würfeln.","Öl in der Pfanne erhitzen (mittlere Hitze), Gemüse ~5 Min anbraten.","Eier verquirlen, salzen, über das Gemüse geben und unter Rühren stocken lassen.","Ohne Beilage servieren – die 4 Eier machen satt und liefern viel Eiweiß."]},
+      {id:"f3",name:"Haferbrei mit Banane",kcal:450,protein:18,
+       ingr:[["Haferflocken","60 g"],["Milch","250 ml"],["Banane","½ (~60 g)"],["Erdnussmus","10 g"]],
+       steps:["Haferflocken mit Milch in einen Topf geben.","Unter Rühren 3–5 Min köcheln, bis es cremig ist.","In eine Schüssel füllen, Banane in Scheiben darauf.","Erdnussmus darüber geben."]},
+      {id:"f4",name:"Sauerteig-Rührei mit Paprika & Tomate",kcal:520,protein:25,fresh:"Paprika & Tomate: waschen, klein würfeln, in 1 EL Öl ~5 Min anbraten.",
+       ingr:[["Eier","3 Stück"],["Sauerteig-Discard","100 g"],["Paprika (frisch)","1 (~150 g)"],["Tomate (frisch)","1 (~100 g)"],["Öl","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Paprika und Tomate waschen und klein würfeln.","Öl in der Pfanne erhitzen (mittlere Hitze), Gemüse ~5 Min anbraten.","Eier mit dem Sauerteig-Discard und einer Prise Salz glatt verquirlen.","Masse über das Gemüse gießen und wie ein dickes Omelett ~3–4 Min stocken lassen, einmal wenden (oder rührend als Rührei zubereiten).","Der Discard macht satter und ersetzt ein Ei – so reichen 3 statt 4 Eier."]}
+    ],
+    mittag: [
+      {id:"m1",name:"Linsen-Dal mit Reis & Tomaten",kcal:560,protein:25,fresh:"Paprika, Zucchini, Zwiebel & Tomaten: waschen, würfeln, in 1 EL Öl ~5–8 Min anbraten.",
+       ingr:[["Rote Linsen (trocken)","80 g"],["Reis (trocken)","60 g"],["Tomaten (frisch)","2 (~200 g)"],["Paprika (frisch)","1 (~150 g)"],["Zucchini (frisch)","1 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Currypulver, Salz","nach Geschmack"],["Wasser","~200 ml"]],
+       steps:["Reis nach Packung kochen.","Tomaten, Paprika, Zucchini und Zwiebel waschen und würfeln.","Öl erhitzen, Zwiebel glasig dünsten, dann Paprika & Zucchini 5–8 Min anbraten.","Tomaten dazugeben und 2–3 Min mitbraten, bis sie zerfallen.","Linsen, Wasser und Curry dazugeben, 12–15 Min köcheln bis weich.","Mit dem Reis servieren."]},
+      {id:"m2",name:"Vollkornnudeln mit Kichererbsen",kcal:600,protein:26,fresh:"Zucchini, Paprika & Zwiebel: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten.",
+       ingr:[["Vollkornnudeln (trocken)","80 g"],["Passierte Tomaten","200 g"],["Kichererbsen (abgetropft)","120 g"],["Zucchini (frisch)","1 (~200 g)"],["Paprika (frisch)","1 (~150 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Kräuter, Salz","nach Geschmack"]],
+       steps:["Nudeln nach Packung kochen.","Zucchini, Paprika und Zwiebel waschen und schneiden.","Öl erhitzen, Zwiebel glasig dünsten, dann Zucchini & Paprika 5–8 Min anbraten.","Kichererbsen und passierte Tomaten dazugeben, 5 Min köcheln, würzen.","Mit den Nudeln vermengen."]},
+      {id:"m3",name:"Kartoffel-Gemüse-Pfanne mit Tomaten",kcal:510,protein:25,fresh:"Brokkoli, Karotte, Paprika & Tomaten: waschen, in Stücke schneiden, mit den Kartoffeln in 1 EL Öl ~6–8 Min anbraten.",
+       ingr:[["Kartoffeln (gekocht)","300 g"],["Brokkoli (frisch)","150 g"],["Tomaten (frisch)","2 (~200 g)"],["Karotte (frisch)","1 (~80 g)"],["Paprika (frisch)","½ (~75 g)"],["Öl","1 EL"],["Magerquark (Dip)","150 g"],["Salz, Pfeffer, Kräuter","nach Geschmack"]],
+       steps:["Gekochte Kartoffeln in Scheiben schneiden.","Brokkoli in Röschen teilen, Karotte, Paprika & Tomaten in Stücke schneiden, alles waschen.","Öl erhitzen, Kartoffeln goldbraun braten, Brokkoli, Karotte & Paprika dazu, 6–8 Min anbraten.","Tomaten in den letzten 2 Min mitbraten, damit sie noch etwas Biss behalten.","Magerquark mit Salz, Pfeffer und Kräutern zu einem Dip verrühren (alternativ 40 g Feta darüberbröseln)."]}
+    ],
+    abend: [
+      {id:"a1",name:"Tofu-Gemüse-Pfanne mit Tomaten",kcal:430,protein:33,fresh:"Zucchini, Paprika, Zwiebel & Tomaten: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten.",
+       ingr:[["Tofu natur","200 g"],["Zucchini (frisch)","1 (~200 g)"],["Paprika (frisch)","1 (~150 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Sojasoße","1 EL"]],
+       steps:["Tofu abtropfen und in Würfel schneiden.","Zucchini, Paprika, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zucchini, Paprika & Zwiebel 5 Min anbraten, dann Tomaten 2–3 Min dazu.","Tofu zurück in die Pfanne, mit Sojasoße abschmecken."]},
+      {id:"a2",name:"Bohnen-Ei-Salat",kcal:450,protein:26,
+       ingr:[["Blattsalat (frisch)","100 g"],["Tomate (frisch)","1 (~100 g)"],["Gurke (frisch)","½ (~150 g)"],["Eier","2 Stück"],["Kidneybohnen (abgetropft)","120 g"],["Vollkornbrot","1 Scheibe (~50 g)"],["Essig, Öl, Salz","fürs Dressing"]],
+       steps:["Eier 8–9 Min hart kochen, abschrecken, pellen.","Blattsalat waschen, Tomate und Gurke klein schneiden.","Kidneybohnen abspülen und abtropfen lassen.","Alles mischen, Eier vierteln, Dressing darüber, mit Brot servieren."]},
+      {id:"a3",name:"Rührei mit Spinat, Tomaten & Zucchini",kcal:410,protein:27,fresh:"Zucchini, Paprika, Tomaten & Spinat: waschen, in 1 EL Öl anbraten (Spinat zuletzt, bis er zusammenfällt).",
+       ingr:[["Eier","3 Stück"],["Zucchini (frisch)","1 (~200 g)"],["Paprika (frisch)","1 (~150 g)"],["Tomaten (frisch)","2 (~200 g)"],["Spinat (frisch)","100 g"],["Öl","1 EL"],["Vollkornbrot","1 Scheibe (~50 g)"]],
+       steps:["Zucchini, Paprika und Tomaten waschen und schneiden, Spinat verlesen und waschen.","Öl erhitzen, Zucchini & Paprika ~5 Min anbraten, dann Tomaten 2 Min dazu.","Spinat unterheben, bis er zusammenfällt.","Eier verquirlen, über das Gemüse geben, stocken lassen.","Mit der Scheibe Vollkornbrot servieren."]},
+      {id:"a4",name:"Tofu-Brokkoli-Pfanne mit Tomaten",kcal:430,protein:32,fresh:"Brokkoli, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~6–8 Min anbraten. (Ohne Ei, ohne Paprika)",
+       ingr:[["Tofu natur","200 g"],["Brokkoli (frisch)","200 g"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Sojasoße","1 EL"]],
+       steps:["Tofu abtropfen und in Würfel schneiden.","Brokkoli in Röschen teilen, Tomaten und Zwiebel schneiden, alles waschen.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Brokkoli & Zwiebel ~6 Min anbraten, dann Tomaten 2–3 Min dazu.","Tofu zurück in die Pfanne, mit Sojasoße abschmecken."]},
+      {id:"a5",name:"Linsen-Tomaten-Pfanne mit Zucchini",kcal:390,protein:18,fresh:"Zucchini, Tomaten & Zwiebel: waschen, würfeln, in 1 EL Öl ~5–8 Min anbraten. (Ohne Ei, ohne Paprika)",
+       ingr:[["Rote Linsen (trocken)","80 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Kreuzkümmel, Salz","nach Geschmack"],["Wasser","~200 ml"]],
+       steps:["Zucchini, Tomaten und Zwiebel waschen und würfeln.","Öl erhitzen, Zwiebel glasig dünsten, Zucchini ~5 Min anbraten.","Tomaten 2–3 Min dazugeben.","Linsen, Wasser und Gewürze dazu, 12–15 Min köcheln bis weich.","Tipp: mit 150 g Magerquark dazu wird's noch eiweißreicher."]},
+      {id:"a6",name:"Hüttenkäse-Teller mit Pfannengemüse",kcal:400,protein:28,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten. (Ohne Ei, ohne Paprika)",
+       ingr:[["Hüttenkäse (körniger Frischkäse)","200 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Vollkornbrot","1 Scheibe (~50 g)"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Zucchini, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten 2–3 Min dazu, würzen.","Gemüse auf einen Teller geben, den Hüttenkäse daneben.","Mit der Scheibe Vollkornbrot servieren."]},
+      {id:"a7",name:"Zucchini-Tofu-Pfanne mit Hüttenkäse",kcal:430,protein:37,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~6–8 Min anbraten. (Ohne Brot, Ei, Paprika, Brokkoli)",
+       ingr:[["Tofu natur","150 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Hüttenkäse (körniger Frischkäse)","150 g"],["Öl","1 EL"],["Sojasoße","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Tofu abtropfen und in Würfel schneiden. Zucchini, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten 2–3 Min dazu.","Tofu zurück in die Pfanne, mit Sojasoße und Salz/Pfeffer abschmecken.","Auf einen Teller geben und den Hüttenkäse darüber oder daneben — nicht mitbraten, kommt kalt dazu."]},
+      {id:"a8",name:"Spinat-Tofu-Pfanne mit Feta",kcal:420,protein:32,fresh:"Spinat, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~5 Min anbraten (Spinat zuletzt). (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
+       ingr:[["Tofu natur","200 g"],["Spinat (frisch)","150 g"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Feta","40 g"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Tofu abtropfen und würfeln. Tomaten und Zwiebel waschen und schneiden, Spinat verlesen und waschen.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zwiebel & Tomaten ~4 Min anbraten, Spinat unterheben bis er zusammenfällt.","Tofu zurück in die Pfanne, mit Salz und Pfeffer würzen.","Vom Herd nehmen und den Feta kalt darüberbröseln."]},
+      {id:"a9",name:"Grüne-Bohnen-Tofu-Pfanne mit Kräuterquark",kcal:410,protein:36,fresh:"Grüne Bohnen, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~8 Min anbraten. (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
+       ingr:[["Tofu natur","150 g"],["Grüne Bohnen (frisch od. TK)","200 g"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Sojasoße","1 EL"],["Magerquark","150 g"],["Kräuter, Salz","nach Geschmack"]],
+       steps:["Tofu abtropfen und würfeln. Bohnen, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Bohnen & Zwiebel ~8 Min anbraten (bei frischen Bohnen einen Schuss Wasser dazu), dann Tomaten 2–3 Min dazu.","Tofu zurück in die Pfanne, mit Sojasoße abschmecken.","Magerquark mit Kräutern und Salz verrühren und kalt dazu servieren."]},
+      {id:"a10",name:"Avocado-Bowl mit Nüssen & Kichererbsen",kcal:540,protein:22,fresh:"Kalte Bowl – kein Kochen. Alles frisch waschen und klein schneiden. (Ohne Brot, Ei, Paprika, Brokkoli, Pilze) Etwas kalorienreicher durch Avocado & Nüsse – ideal an einem Trainingstag.",
+       ingr:[["Avocado","½ (~100 g)"],["Kichererbsen (abgetropft)","150 g"],["Cherrytomaten (frisch)","150 g"],["Gurke (frisch)","½ (~150 g)"],["Rote Zwiebel (frisch)","½ (~40 g)"],["Walnüsse (od. andere Nüsse)","20 g"],["Feta","40 g"],["Olivenöl","1 EL"],["Zitronensaft, Salz, Pfeffer","nach Geschmack"]],
+       steps:["Kichererbsen abspülen und abtropfen lassen.","Avocado halbieren, entkernen und würfeln. Cherrytomaten halbieren, Gurke würfeln, rote Zwiebel fein schneiden.","Alles in eine Schüssel geben.","Walnüsse grob hacken und den Feta zerbröseln, darüberstreuen.","Mit Olivenöl, einem Spritzer Zitrone, Salz und Pfeffer anmachen."]},
+      {id:"a11",name:"Mangold-Pfanne mit Kichererbsen & Feta",kcal:430,protein:20,fresh:"Mangold (Stiele und Blätter getrennt), Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl anbraten (Stiele zuerst, Blätter zuletzt). (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
+       ingr:[["Mangold (frisch)","200 g"],["Kichererbsen (abgetropft)","150 g"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Knoblauch","1 Zehe"],["Öl","1 EL"],["Feta","50 g"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Kichererbsen abspülen und abtropfen lassen. Mangold waschen, Stiele klein schneiden, Blätter grob schneiden. Tomaten und Zwiebel schneiden, Knoblauch fein hacken.","Öl erhitzen, Zwiebel & Knoblauch andünsten, dann die Mangoldstiele ~4 Min anbraten.","Tomaten und Kichererbsen dazugeben, 3–4 Min köcheln, dann die Mangoldblätter unterheben bis sie zusammenfallen. Mit Salz und Pfeffer würzen.","Vom Herd nehmen und den Feta kalt darüberbröseln."]},
+      {id:"a12",name:"Tofu-Spinat-Pfanne mit Avocado",kcal:480,protein:27,fresh:"Spinat, Tomaten & Zwiebel: waschen, in 1 EL Öl anbraten (Spinat zuletzt). Avocado roh dazu. (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
+       ingr:[["Tofu natur","200 g"],["Spinat (frisch)","100 g"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Sojasoße","1 EL"],["Avocado","½ (~100 g)"],["Limette/Zitrone, Salz, Pfeffer","nach Geschmack"]],
+       steps:["Tofu abtropfen und würfeln. Tomaten und Zwiebel schneiden, Spinat verlesen und waschen.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zwiebel & Tomaten ~4 Min anbraten, Spinat unterheben bis er zusammenfällt.","Tofu zurück in die Pfanne, mit Sojasoße abschmecken.","Auf einen Teller geben, die halbe Avocado in Scheiben darauflegen, mit einem Spritzer Limette, Salz und Pfeffer würzen."]},
+      {id:"a13",name:"Zucchini-Kichererbsen-Pfanne mit Nüssen & Feta",kcal:470,protein:22,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~6 Min anbraten. (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
+       ingr:[["Kichererbsen (abgetropft)","150 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Walnüsse (od. andere Nüsse)","20 g"],["Feta","40 g"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Kichererbsen abspülen. Zucchini, Tomaten und Zwiebel waschen und schneiden.","Nüsse in der trockenen Pfanne kurz anrösten, bis sie duften, dann herausnehmen.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten und Kichererbsen 3–4 Min dazu, würzen.","Auf einen Teller geben, Feta zerbröseln und die gerösteten Nüsse darüberstreuen."]}
+    ]
+  };
+  var CATLABEL = {fruehstueck:"Frühstück",mittag:"Mittagessen",abend:"Abendessen"};
+
+  var MEAL_BY_ID = {};
+  ["fruehstueck","mittag","abend"].forEach(function(cat){ MEALS[cat].forEach(function(m){ MEAL_BY_ID[m.id]={cat:cat,m:m}; }); });
+
+  // Plan: startet morgen (Fr 04.09.) bis einschließlich Do 10.09. — Trainingswoche 1
+  var SCHEDULE = [
+    {dow:"Freitag",   date:"Fr 04.09.", work:"runA",     bauch:false, bf:"f4", lu:"m2", di:"a7"},
+    {dow:"Samstag",   date:"Sa 05.09.", work:"active",   bauch:false, bf:"f1", lu:"m3", di:"a11"},
+    {dow:"Sonntag",   date:"So 06.09.", work:"restK",    bauch:false, bf:"f4", lu:"m2", di:"a12"},
+    {dow:"Montag",    date:"Mo 07.09.", work:"runA",     bauch:true,  bf:"f1", lu:"m1", di:"a13"},
+    {dow:"Dienstag",  date:"Di 08.09.", work:"walk",     bauch:false, bf:"f1", lu:"m3", di:"a7"},
+    {dow:"Mittwoch",  date:"Mi 09.09.", work:"runB",     bauch:true,  bf:"f4", lu:"m1", di:"a12"},
+    {dow:"Donnerstag",date:"Do 10.09.", work:"strength", bauch:true,  bf:"f1", lu:"m3", di:"a11"}
+  ];
+  function workMeta(k){
+    switch(k){
+      case "runA":     return {label:"Lauf A · 2,0 km locker",    tab:"plan",     tag:"run",   tagText:"Lauf A",     chip:"sport",       banana:true};
+      case "runB":     return {label:"Lauf B · Intervalle",       tab:"plan",     tag:"speed", tagText:"Intervalle", chip:"sport speed", banana:true};
+      case "strength": return {label:"Kraftzirkel ohne Geräte",   tab:"training", tag:"run",   tagText:"Kraft",      chip:"sport",       banana:true};
+      case "restK":    return {label:"Ruhe oder leichte Kraft",   tab:"training", tag:"rest",  tagText:"Ruhe",       chip:"",            banana:false};
+      case "walk":     return {label:"Spaziergang · 30–40 Min",   tab:"plan",     tag:"rest",  tagText:"Gehen",      chip:"",            banana:false};
+      default:         return {label:"Aktiv · Gehen oder Rad",    tab:"plan",     tag:"rest",  tagText:"Aktiv",      chip:"",            banana:false};
+    }
+  }
+
+  /* ---------- STATE ---------- */
+  // Plan-Fenster: Fr 04.09.2026 (Index 0) bis Do 10.09.2026 (Index 6)
+  var PLAN_START = new Date(2026,8,4);
+  function planTodayIdx(){
+    var n=new Date(); n.setHours(0,0,0,0);
+    var diff=Math.round((n-PLAN_START)/86400000);
+    if(diff<0) return 0; if(diff>6) return 6; return diff;
+  }
+  function isWithinPlan(){
+    var n=new Date(); n.setHours(0,0,0,0);
+    var diff=Math.round((n-PLAN_START)/86400000);
+    return diff>=0 && diff<=6;
+  }
+  var state = { view:"heute", day:planTodayIdx(), week:1 };
+  try{ var w=parseInt(localStorage.getItem("nico_week"),10); if(w>=1&&w<=8) state.week=w; }catch(e){}
+
+  var $ = function(s,r){return (r||document).querySelector(s);};
+  var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+  /* ---------- TABS ---------- */
+  function setView(v){
+    state.view=v;
+    $$(".tab").forEach(function(t){ t.setAttribute("aria-selected", t.dataset.view===v ? "true":"false"); });
+    $$(".view").forEach(function(el){ el.hidden = (el.id !== "view-"+v); });
+    window.scrollTo({top:0,behavior:"auto"});
+  }
+  $$(".tab").forEach(function(t){ t.addEventListener("click",function(){ setView(t.dataset.view); }); });
+
+  /* ---------- HEUTE ---------- */
+  function fmtDate(){
+    var days=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+    var mon=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    var n=new Date();
+    return days[n.getDay()]+", "+n.getDate()+". "+mon[n.getMonth()]+" "+n.getFullYear();
+  }
+
+  function buildDayPicker(){
+    var wrap=$("#day-picker"); wrap.innerHTML="";
+    var within=isWithinPlan(), ti=planTodayIdx();
+    SCHEDULE.forEach(function(d,i){
+      var parts=d.date.split(" "); // ["Fr","04.09."]
+      var b=document.createElement("button");
+      b.className="dbtn"+((within&&i===ti)?" today":"");
+      b.type="button";
+      b.innerHTML='<span class="d1">'+parts[0]+'</span><span class="d2">'+parts[1].replace(/\.$/,"")+'</span>';
+      b.setAttribute("aria-pressed", i===state.day?"true":"false");
+      b.addEventListener("click",function(){ state.day=i; syncDayPicker(); renderToday(); });
+      wrap.appendChild(b);
+    });
+  }
+  function syncDayPicker(){ $$("#day-picker .dbtn").forEach(function(b,i){ b.setAttribute("aria-pressed", i===state.day?"true":"false"); }); }
+
+  function buildWeekPicker(){
+    var wrap=$("#week-picker"); wrap.innerHTML="";
+    for(var i=1;i<=8;i++){ (function(i){
+      var b=document.createElement("button");
+      b.className="wbtn"; b.type="button"; b.textContent="W"+i;
+      b.setAttribute("aria-pressed", i===state.week?"true":"false");
+      b.addEventListener("click",function(){
+        state.week=i; try{localStorage.setItem("nico_week",String(i));}catch(e){}
+        syncWeekPicker(); renderPlanTable();
+      });
+      wrap.appendChild(b);
+    })(i);}
+  }
+  function syncWeekPicker(){ $$("#week-picker .wbtn").forEach(function(b,i){ b.setAttribute("aria-pressed",(i+1)===state.week?"true":"false"); }); }
+
+  function renderToday(){
+    var d=SCHEDULE[state.day], wm=workMeta(d.work), out=$("#today-out");
+    var icon,cls,body;
+    switch(d.work){
+      case "runA": cls="k-runA"; icon="🏃"; body='<p><strong>2,0 km</strong> am Stück locker durchlaufen (~9–10&nbsp;km/h). Vorher 5 Min Warm-up, danach 3 Min auslaufen.</p>'; break;
+      case "runB": cls="k-runB"; icon="⚡"; body='<p>Intervall-Einheit — Ablauf im Tab „Wochenplan“ (Einheit B). Vorher 5 Min Warm-up.</p>'; break;
+      case "strength": cls="k-strength"; icon="💪"; body='<p><strong>2–3 Runden</strong> des Kraftzirkels. Alle Übungen im Tab „Kraft &amp; Bauch“.</p>'; break;
+      case "restK": cls="k-rest"; icon="🌙"; body='<p>Erholung. Wenn du magst, ein leichter Kraftzirkel (1 Runde) — sonst einfach entspannen. Regeneration macht dich stärker.</p>'; break;
+      case "walk": cls="k-walk"; icon="🚶"; body='<p><strong>30–40 Min</strong> zügig gehen. Lockere Erholung und hilft beim Abnehmen — kein Lauf heute.</p>'; break;
+      default: cls="k-active"; icon="🚲"; body='<p>Spaziergang oder eine lockere Radrunde. Ziel: aktiv bleiben, Richtung 8.000–10.000 Schritte.</p>';
+    }
+    var pills='<div style="margin-top:6px">'
+      + '<span class="pill">Trainingswoche 1 / 8</span>'
+      + (wm.banana?'<span class="pill">🍌 Banane vor dem Sport</span>':'')
+      + (d.bauch?'<span class="pill b">+ Bauch-Block (~8–10 Min)</span>':'')
+      + '</div>';
+    var linkLabel = wm.tab==="training" ? "Zu den Übungen" : "Zum Laufplan";
+    var link='<div style="margin-top:12px"><button class="linkchip '+wm.chip+'" data-goto="'+wm.tab+'">'+linkLabel+' <span class="arw">›</span></button>'
+      + (d.bauch?' <button class="linkchip" data-goto="training">Bauch-Übungen <span class="arw">›</span></button>':'')
+      + '</div>';
+    out.innerHTML =
+      '<div class="todaycard '+cls+'">'
+      +'<div class="head"><div><div class="kicker">'+d.dow+' '+d.date.split(" ")[1]+' · '+wm.tagText+'</div><h3>'+wm.label+(d.bauch?' + Bauch':'')+'</h3></div><div class="ic">'+icon+'</div></div>'
+      +'<div class="body">'+body+pills+link+'</div></div>';
+    renderTodayMeals();
+  }
+
+  /* ---------- MEALS (Heute quick + Ernährung) ---------- */
+  function optBtn(cat,meal){
+    var b=document.createElement("button");
+    b.className="optbtn"; b.type="button";
+    b.innerHTML='<span class="oname">'+meal.name+'</span><span class="okcal">ca. '+meal.kcal+' kcal</span><span class="arw">›</span>';
+    b.addEventListener("click",function(){ openRecipe(cat,meal); });
+    return b;
+  }
+  function renderTodayMeals(){
+    var d=SCHEDULE[state.day], wrap=$("#today-meals"); wrap.innerHTML="";
+    [["Morgens","fruehstueck",d.bf],["Mittags","mittag",d.lu],["Abends","abend",d.di]].forEach(function(row){
+      var ref=MEAL_BY_ID[row[2]];
+      var col=document.createElement("div"); col.className="mcat";
+      col.innerHTML='<div class="when">'+row[0]+'</div><h4>'+CATLABEL[row[1]]+'</h4>';
+      var list=document.createElement("div"); list.className="optlist";
+      list.appendChild(optBtn(ref.cat,ref.m));
+      col.appendChild(list); wrap.appendChild(col);
+    });
+  }
+  function renderErnaehrungLists(){
+    $$(".optlist[data-cat]").forEach(function(list){
+      var cat=list.dataset.cat; list.innerHTML="";
+      MEALS[cat].forEach(function(m){ list.appendChild(optBtn(cat,m)); });
+    });
+  }
+
+  /* ---------- MODAL ---------- */
+  var backdrop=$("#backdrop"), lastFocus=null;
+  function openRecipe(cat,m){
+    $("#m-tag").textContent=CATLABEL[cat];
+    $("#m-title").textContent=m.name;
+    var html='<div class="macros">'
+      +'<div class="macro"><div class="v">ca. '+m.kcal+'</div><div class="k">kcal</div></div>'
+      +'<div class="macro"><div class="v">ca. '+m.protein+' g</div><div class="k">Eiweiß</div></div>'
+      +'</div>';
+    html+='<p class="mblock-title">Zutaten (1 Portion)</p><ul class="ingr">';
+    m.ingr.forEach(function(r){ html+='<li><span>'+r[0]+'</span><span class="amt">'+r[1]+'</span></li>'; });
+    html+='</ul>';
+    html+='<p class="mblock-title">Zubereitung</p><ol class="steps">';
+    m.steps.forEach(function(s){ html+='<li>'+s+'</li>'; });
+    html+='</ol>';
+    if(m.fresh){ html+='<div class="fresh">🥘 Frisches Gemüse: '+m.fresh+'</div>'; }
+    $("#m-body").innerHTML=html;
+    lastFocus=document.activeElement;
+    backdrop.hidden=false;
+    document.body.style.overflow="hidden";
+    $("#m-close").focus();
+  }
+  function closeRecipe(){
+    backdrop.hidden=true;
+    document.body.style.overflow="";
+    if(lastFocus&&lastFocus.focus) lastFocus.focus();
+  }
+  $("#m-close").addEventListener("click",closeRecipe);
+  backdrop.addEventListener("click",function(e){ if(e.target===backdrop) closeRecipe(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!backdrop.hidden) closeRecipe(); });
+
+  /* ---------- PLAN TABLE ---------- */
+  function renderPlanTable(){
+    var tb=$("#plan-tbody"); tb.innerHTML="";
+    for(var i=0;i<8;i++){
+      if(PHASES[i]){
+        var pr=document.createElement("tr"); pr.className="phase-line";
+        pr.innerHTML='<td colspan="4">'+PHASES[i]+'</td>'; tb.appendChild(pr);
+      }
+      var tr=document.createElement("tr");
+      if((i+1)===state.week) tr.className="active-week";
+      tr.innerHTML='<td class="wk">'+(i+1)+'</td><td><span class="km">'+WEEK_A[i]+'</span> am Stück</td><td>'+WEEK_B[i]+'</td><td>'+WEEK_K[i]+'</td>';
+      tb.appendChild(tr);
+    }
+  }
+
+  /* ---------- ÜBERSICHT ---------- */
+  function renderSchedule(){
+    var wrap=$("#uebersicht-out"); wrap.innerHTML="";
+    SCHEDULE.forEach(function(d){
+      var wm=workMeta(d.work);
+      var bf=MEAL_BY_ID[d.bf], lu=MEAL_BY_ID[d.lu], di=MEAL_BY_ID[d.di];
+      var sportLabel=wm.label+(d.bauch?" + Bauch":"");
+      var banana=wm.banana?'🍌 1 Banane, dann ':'';
+      var sportChip='<button class="linkchip '+wm.chip+'" data-goto="'+wm.tab+'">'+sportLabel+' <span class="arw">›</span></button>';
+      var card=document.createElement("div"); card.className="sday";
+      card.innerHTML=
+        '<div class="shead"><span class="dow">'+d.dow+'</span><span class="dt">'+d.date+'</span><span class="wtag '+wm.tag+'">'+wm.tagText+'</span></div>'
+        +'<div class="sbody">'
+          +'<div class="srow"><span class="rk">Morgens</span><span class="rc">'+banana+sportChip+'</span></div>'
+          +'<div class="srow"><span class="rk">Frühstück</span><span class="rc"><button class="mealchip" data-meal="'+d.bf+'">'+bf.m.name+' <span class="arw">›</span></button></span></div>'
+          +'<div class="srow"><span class="rk">Mittagessen</span><span class="rc"><button class="mealchip" data-meal="'+d.lu+'">'+lu.m.name+' <span class="arw">›</span></button></span></div>'
+          +'<div class="srow"><span class="rk">Abendessen</span><span class="rc"><button class="mealchip" data-meal="'+d.di+'">'+di.m.name+' <span class="arw">›</span></button></span></div>'
+        +'</div>';
+      wrap.appendChild(card);
+    });
+  }
+
+  /* ---------- EINKAUFSLISTE ---------- */
+  function frac(s){ s=String(s); if(s==="½")return .5; if(s==="¼")return .25; if(s==="¾")return .75; return parseFloat(s.replace(",",".")); }
+  function fmtNum(n){ var r=Math.round(n*100)/100; if(Math.abs(r-Math.round(r))<1e-9) return String(Math.round(r)); return String(r).replace(".",","); }
+  function scaleAmount(str,f){
+    if(f===1) return str;
+    if(/Geschmack|Dressing/i.test(str)) return str;
+    var out=str.replace(/~\s*(\d+(?:[.,]\d+)?)\s*(g|ml)/g,function(m,n,u){ return "~"+fmtNum(frac(n)*f)+" "+u; });
+    out=out.replace(/^\s*(½|¼|¾|\d+(?:[.,]\d+)?)/,function(m,n){ return fmtNum(frac(n)*f); });
+    out=out.replace(/^(\d+(?:[.,]\d+)?)\s*Scheibe\b/,function(m,n){ return (frac(n)>1? n+" Scheiben": m); });
+    return out;
+  }
+  function populateShopSelect(){
+    var sel=$("#shop-meal");
+    [["Frühstück","fruehstueck"],["Mittagessen","mittag"],["Abendessen","abend"]].forEach(function(g){
+      var og=document.createElement("optgroup"); og.label=g[0];
+      MEALS[g[1]].forEach(function(m){ var o=document.createElement("option"); o.value=g[1]+":"+m.id; o.textContent=m.name; og.appendChild(o); });
+      sel.appendChild(og);
+    });
+  }
+  function computeShop(){
+    var val=$("#shop-meal").value; if(!val) return;
+    var p=parseInt($("#shop-persons").value,10); if(!p||p<1){ p=1; $("#shop-persons").value=1; } if(p>20){ p=20; $("#shop-persons").value=20; }
+    var parts=val.split(":");
+    var entry=MEALS[parts[0]].filter(function(m){ return m.id===parts[1]; })[0];
+    var items=entry.ingr.map(function(r){ return {name:r[0], amount:scaleAmount(r[1],p)}; });
+    renderCheckList($("#shop-out"), items, "nico_have_"+entry.id, "Einkaufsliste · "+entry.name+" · "+p+" "+(p===1?"Person":"Personen"));
+  }
+
+  /* ---------- Abhakbare Liste ---------- */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function loadHave(k){ try{ return new Set(JSON.parse(localStorage.getItem(k)||"[]")); }catch(e){ return new Set(); } }
+  function saveHave(k,set){ try{ localStorage.setItem(k, JSON.stringify(Array.prototype.slice.call(set))); }catch(e){} }
+  function renderCheckList(container, items, storeKey, heading){
+    var have=loadHave(storeKey);
+    function row(it){
+      var checked=have.has(it.name);
+      return '<li class="'+(checked?"checked":"")+'"><label><input type="checkbox" value="'+esc(it.name)+'"'+(checked?" checked":"")+'><span class="ci-name">'+it.name+'</span><span class="ci-amt">'+it.amount+'</span></label></li>';
+    }
+    function draw(){
+      var need=[],got=[];
+      items.forEach(function(it){ (have.has(it.name)?got:need).push(it); });
+      var h = heading? '<h4>'+heading+'</h4>' : '';
+      h+='<div class="cl-head"><span class="cl-title">Noch besorgen</span><span class="cl-count">'+need.length+'</span></div>';
+      h+= need.length? '<ul class="check-list">'+need.map(row).join("")+'</ul>' : '<p class="cl-empty">Alles abgehakt. 🎉</p>';
+      h+='<div class="cl-head done"><span class="cl-title">Schon vorhanden</span><span class="cl-count">'+got.length+'</span></div>';
+      h+= got.length? '<ul class="check-list have">'+got.map(row).join("")+'</ul>' : '<p class="cl-empty">Noch nichts abgehakt.</p>';
+      container.innerHTML='<div class="shop-result">'+h+'</div>';
+      Array.prototype.forEach.call(container.querySelectorAll("input[type=checkbox]"),function(cb){
+        cb.addEventListener("change",function(){ if(cb.checked) have.add(cb.value); else have.delete(cb.value); saveHave(storeKey,have); draw(); });
+      });
+    }
+    draw();
+  }
+
+  /* ---------- WOCHEN-EINKAUFSLISTE ---------- */
+  // Gleiche Zutaten mit leicht anderem Namen zu einer Zeile zusammenfassen
+  var NAME_MAP = {
+    "Tomate (frisch)":"Tomaten (frisch)",
+    "Magerquark (Dip)":"Magerquark",
+    "Walnüsse (od. andere Nüsse)":"Nüsse",
+    "Salz, Pfeffer":"Salz, Pfeffer, Kräuter",
+    "Kräuter, Salz":"Salz, Pfeffer, Kräuter",
+    "Currypulver, Salz":"Currypulver",
+    "Kreuzkümmel, Salz":"Kreuzkümmel",
+    "Limette/Zitrone, Salz, Pfeffer":"Limette/Zitrone"
+  };
+  function normWord(w){ if(!w) return "Stück"; if(/^Scheiben?$/.test(w)) return "Scheibe"; if(/^Zehen?$/.test(w)) return "Zehe"; return w; }
+  function plural(word,n){ if(n>1){ if(word==="Scheibe") return "Scheiben"; if(word==="Zehe") return "Zehen"; } return word; }
+  function parseAmount(str){
+    var s=String(str).trim();
+    if(/Geschmack|Dressing/i.test(s)) return {kind:"note"};
+    var m=s.match(/^(½|¼|¾|\d+(?:[.,]\d+)?)\s*(Scheiben?|Zehen?)?\s*\(~\s*(\d+(?:[.,]\d+)?)\s*(g|ml)\)$/);
+    if(m) return {kind:"count", count:frac(m[1]), word:normWord(m[2]), hintVal:frac(m[3]), hintUnit:m[4]};
+    m=s.match(/^~?\s*(\d+(?:[.,]\d+)?)\s*(g|ml|EL|TL|Stück|Zehen?|Scheiben?)$/);
+    if(m) return {kind:"unit", value:frac(m[1]), unit:normWord(m[2])};
+    return {kind:"raw", text:s};
+  }
+  function computeWeekShop(){
+    var p=parseInt($("#weekshop-persons").value,10); if(!p||p<1){ p=1; $("#weekshop-persons").value=1; } if(p>20){ p=20; $("#weekshop-persons").value=20; }
+    var agg={}, order=[];
+    function add(ingr){
+      ingr.forEach(function(r){
+        var name=NAME_MAP[r[0]]||r[0];
+        if(!agg[name]){ agg[name]={units:{},count:0,word:"Stück",hint:0,hintUnit:"g",note:false,raw:[]}; order.push(name); }
+        var a=agg[name], pa=parseAmount(r[1]);
+        if(pa.kind==="count"){ a.count+=pa.count*p; a.word=pa.word; a.hint+=pa.hintVal*p; a.hintUnit=pa.hintUnit; }
+        else if(pa.kind==="unit"){ a.units[pa.unit]=(a.units[pa.unit]||0)+pa.value*p; }
+        else if(pa.kind==="note"){ a.note=true; }
+        else { if(a.raw.indexOf(pa.text)<0) a.raw.push(pa.text); }
+      });
+    }
+    SCHEDULE.forEach(function(d){ add(MEAL_BY_ID[d.bf].m.ingr); add(MEAL_BY_ID[d.lu].m.ingr); add(MEAL_BY_ID[d.di].m.ingr); });
+    var items=order.map(function(name){
+      var a=agg[name], parts=[];
+      if(a.count>0){ parts.push(fmtNum(a.count)+" "+plural(a.word,a.count)+(a.hint>0?" (~"+fmtNum(a.hint)+" "+a.hintUnit+")":"")); }
+      Object.keys(a.units).forEach(function(u){ parts.push(fmtNum(a.units[u])+" "+plural(u,a.units[u])); });
+      if(!parts.length && a.raw.length) parts.push(a.raw.join(", "));
+      if(!parts.length && a.note) parts.push("nach Geschmack");
+      return {name:name, amount:parts.join(" + ")};
+    });
+    renderCheckList($("#weekshop-out"), items, "nico_have_week", "Wochen-Einkaufsliste · "+p+" "+(p===1?"Person":"Personen")+" · 21 Mahlzeiten (Fr–Do)");
+  }
+
+  /* ---------- INIT ---------- */
+  $("#today-date").textContent=fmtDate();
+  buildDayPicker(); buildWeekPicker();
+  renderToday(); renderTodayMeals(); renderErnaehrungLists(); renderPlanTable();
+  renderSchedule();
+  populateShopSelect(); computeShop();
+  $("#shop-go").addEventListener("click",computeShop);
+  $("#shop-meal").addEventListener("change",computeShop);
+  $("#shop-persons").addEventListener("input",computeShop);
+  computeWeekShop();
+  $("#weekshop-go").addEventListener("click",computeWeekShop);
+  $("#weekshop-persons").addEventListener("input",computeWeekShop);
+  $("#weekshop-reset").addEventListener("click",function(){ try{localStorage.removeItem("nico_have_week");}catch(e){} computeWeekShop(); });
+  $("#uebersicht-out").addEventListener("click",function(e){
+    var mc=e.target.closest(".mealchip"); if(mc){ var ref=MEAL_BY_ID[mc.getAttribute("data-meal")]; if(ref) openRecipe(ref.cat,ref.m); return; }
+    var lc=e.target.closest(".linkchip[data-goto]"); if(lc){ setView(lc.getAttribute("data-goto")); }
+  });
+  $("#today-out").addEventListener("click",function(e){
+    var lc=e.target.closest(".linkchip[data-goto]"); if(lc){ setView(lc.getAttribute("data-goto")); }
+  });
+})();
+</script>
