@@ -1,4 +1,9 @@
-<title>Laufstart</title>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Change YOUR Sport today</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -31,7 +36,7 @@
 
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--ink);
+  body{margin:0;background:var(--bg);color:var(--ink);
     font-family:"Barlow",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     line-height:1.6;-webkit-font-smoothing:antialiased;}
   h1,h2,h3,.display{font-family:"Barlow Condensed","Barlow",system-ui,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
@@ -251,12 +256,76 @@
   .check-list.have .ci-amt{color:var(--muted)}
   .cl-empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
 
+  /* ============ HANDY-VERSION · alles etwas größer ============ */
+  @media (max-width:600px){
+    html{font-size:17px}
+    .wrap{padding:22px 14px 96px}
+    .appbar-inner{padding:11px 14px 0}
+    .brand b{font-size:1.4rem}
+    nav.tabs{gap:2px}
+    .tab{padding:12px 15px 14px;font-size:1.12rem}
+    section.block{margin-top:38px}
+    .lead{font-size:1.05rem}
+    .card,.ex{padding:18px 17px}
+
+    /* Tageswähler: waagerecht wischbar statt gequetscht */
+    .days{display:flex;overflow-x:auto;gap:7px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .days::-webkit-scrollbar{display:none}
+    .days .dbtn{flex:0 0 auto;min-width:58px;padding:11px 4px}
+    .dbtn .d1{font-size:1.08rem}
+    .dbtn .d2{font-size:.72rem}
+    .weeks .wbtn{padding:9px 14px;font-size:1rem}
+
+    /* Tageskarte */
+    .todaycard .head h3{font-size:1.9rem}
+    .todaycard .head .ic{font-size:2.2rem}
+    .todaycard .body p{font-size:1.04rem}
+    .pill{font-size:.92rem;padding:6px 13px}
+
+    /* Mahlzeiten & Chips: größere Tap-Flächen */
+    .meal-cats{grid-template-columns:1fr}
+    .optbtn{padding:16px 16px}
+    .optbtn .oname{font-size:1.04rem}
+    .optbtn .okcal{font-size:.85rem}
+    .mcat h4{font-size:1.3rem}
+    .mealchip,.linkchip{padding:11px 16px;font-size:1.02rem}
+
+    /* Übersicht: Label über Wert für mehr Platz */
+    .srow{padding:11px 0}
+    .srow .rk{min-width:100%;margin-bottom:3px}
+    .sday .shead .dow{font-size:1.28rem}
+    .sday .sbody{padding:4px 16px 12px}
+
+    /* Rezept-Fenster */
+    .modal h3{font-size:1.75rem}
+    .modal .close{width:42px;height:42px;font-size:1.25rem}
+    .ingr li{font-size:1.03rem;padding:9px 0}
+    .steps li{font-size:1.04rem;padding-left:42px}
+    .macro{min-width:96px}
+
+    /* Einkaufsliste: Bedienfelder gestapelt & groß */
+    .grid{grid-template-columns:1fr}
+    .shop-controls{gap:12px}
+    .shop-controls label{width:100%}
+    .shop-controls select,.shop-controls input{width:100%;padding:14px 14px;font-size:1.06rem}
+    .shop-btn{padding:14px 22px;font-size:1.1rem;flex:1}
+    .check-list label{padding:15px 4px;font-size:1.05rem}
+    .check-list input{width:26px;height:26px}
+    .check-list .ci-amt{font-size:1.02rem}
+    .cl-title{font-size:.9rem}
+
+    /* Tabellen etwas luftiger */
+    th,td{padding:12px 14px;font-size:1rem}
+  }
+
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
     .optbtn:hover{transform:none}
     *{transition:none!important}
   }
 </style>
+</head>
+<body>
 
 <div class="appbar">
   <div class="appbar-inner">
@@ -971,3 +1040,6 @@
   });
 })();
 </script>
+
+</body>
+</html>
