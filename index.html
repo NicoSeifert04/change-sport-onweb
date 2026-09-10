@@ -255,6 +255,8 @@
   .check-list.have .ci-name{text-decoration:line-through;color:var(--muted)}
   .check-list.have .ci-amt{color:var(--muted)}
   .cl-empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+  .optbtn.extern,.mealchip.extern{cursor:default;background:var(--surface-2);color:var(--muted);border-style:dashed;font-weight:500}
+  .optbtn.extern:hover,.mealchip.extern:hover{transform:none;border-color:var(--line);color:var(--muted)}
 
   /* ============ HANDY-VERSION · alles etwas größer ============ */
   @media (max-width:600px){
@@ -356,7 +358,7 @@
 
     <div class="picker">
       <div>
-        <span class="label">Tag im Plan wählen · Fr 04.09. – Do 10.09.</span>
+        <span class="label">Tag im Plan wählen · Fr 11.09. – Fr 18.09.</span>
         <div class="days" id="day-picker"></div>
       </div>
     </div>
@@ -371,7 +373,7 @@
 
   <!-- ============ ÜBERSICHT ============ -->
   <div class="view" id="view-uebersicht" role="tabpanel" hidden>
-    <span class="eyebrow">Dein Ablauf · Fr 04.09. – Do 10.09.</span>
+    <span class="eyebrow">Dein Ablauf · Woche 2 · Fr 11.09. – Fr 18.09.</span>
     <h2 class="sec">Große Übersicht</h2>
     <p class="lead">Dein kompletter Tagesablauf für die kommende Woche: morgens Banane und Sport, dann die drei Mahlzeiten. Tippe die <strong>Sport-Einheit</strong> an, um zu den Details zu springen, oder eine <strong>Mahlzeit</strong> für das Rezept. Mittag- &amp; Abendessen sind Vorschläge — frei tauschbar.</p>
     <div class="sched" id="uebersicht-out"></div>
@@ -553,7 +555,7 @@
     <p class="lead">Hake ab, was du schon zu Hause hast — abgehakte Zutaten rutschen automatisch nach unten unter „Schon vorhanden". Oben bleibt übersichtlich, was du noch besorgen musst. Deine Haken werden auf diesem Gerät gespeichert.</p>
 
     <section class="block" id="weekshop" style="margin-top:0">
-      <span class="eyebrow">Woche 1 · Fr 04.09. – Do 10.09.</span>
+      <span class="eyebrow">Woche 2 · Fr 11.09. – Fr 18.09.</span>
       <h2 class="sec" style="font-size:1.5rem">Ganze Woche</h2>
       <p class="lead">Alle Zutaten für Frühstück, Mittag- und Abendessen der Woche, automatisch zusammengezählt.</p>
       <div class="card">
@@ -646,7 +648,13 @@
        steps:["Haferflocken mit Milch in einen Topf geben.","Unter Rühren 3–5 Min köcheln, bis es cremig ist.","In eine Schüssel füllen, Banane in Scheiben darauf.","Erdnussmus darüber geben."]},
       {id:"f4",name:"Sauerteig-Rührei mit Paprika & Tomate",kcal:520,protein:25,fresh:"Paprika & Tomate: waschen, klein würfeln, in 1 EL Öl ~5 Min anbraten.",
        ingr:[["Eier","3 Stück"],["Sauerteig-Discard","100 g"],["Paprika (frisch)","1 (~150 g)"],["Tomate (frisch)","1 (~100 g)"],["Öl","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
-       steps:["Paprika und Tomate waschen und klein würfeln.","Öl in der Pfanne erhitzen (mittlere Hitze), Gemüse ~5 Min anbraten.","Eier mit dem Sauerteig-Discard und einer Prise Salz glatt verquirlen.","Masse über das Gemüse gießen und wie ein dickes Omelett ~3–4 Min stocken lassen, einmal wenden (oder rührend als Rührei zubereiten).","Der Discard macht satter und ersetzt ein Ei – so reichen 3 statt 4 Eier."]}
+       steps:["Paprika und Tomate waschen und klein würfeln.","Öl in der Pfanne erhitzen (mittlere Hitze), Gemüse ~5 Min anbraten.","Eier mit dem Sauerteig-Discard und einer Prise Salz glatt verquirlen.","Masse über das Gemüse gießen und wie ein dickes Omelett ~3–4 Min stocken lassen, einmal wenden (oder rührend als Rührei zubereiten).","Der Discard macht satter und ersetzt ein Ei – so reichen 3 statt 4 Eier."]},
+      {id:"f5",name:"Apfel-Streuselkuchen (kleiner Kuchen)",kcal:570,protein:22,fresh:"Ganzer kleiner Kuchen ≈ 570 kcal / 22 g Eiweiß. ½ Kuchen ≈ 285 kcal, ¼ ≈ 143 kcal.",
+       ingr:[["Weizenmehl","95 g"],["Backpulver","1 TL"],["Speisequark 20 %","50 g"],["Apfel","1 (~150 g)"],["Ei","1 Stück"],["Light-Margarine","10 g"],["Mineralwasser","2 EL"],["Zimt/Vanille","nach Geschmack"]],
+       steps:["Backofen auf 180 °C Ober-/Unterhitze vorheizen.","70 g Mehl mit Backpulver mischen. Quark, Ei und Mineralwasser dazugeben und zu einem glatten Teig verrühren.","Apfel entkernen, klein schneiden und unterheben. Teig in eine kleine, gefettete Form geben.","Für die Streusel 25 g Mehl mit der Light-Margarine und Zimt verkneten, auf dem Kuchen verteilen.","Ca. 25 Min backen."]},
+      {id:"f6",name:"Apfel-Zimt-Muffins (6 Stück)",kcal:490,protein:27,fresh:"Ergibt 6 Muffins ≈ 490 kcal / 27 g Eiweiß gesamt (~82 kcal & ~4,5 g Eiweiß pro Stück).",
+       ingr:[["Weizenmehl","80 g"],["Backpulver","1 TL"],["Zimt","1 TL"],["Ei","1 Stück"],["Magerquark","100 g"],["Apfel","1 (~150 g)"],["Mineralwasser","~100 ml"],["Salz","1 Prise"]],
+       steps:["Backofen auf 180 °C Ober-/Unterhitze vorheizen.","Mehl, Backpulver, Zimt und Salz mischen.","Ei, Magerquark und zunächst ~70 ml Mineralwasser zugeben und glatt rühren; nur so viel Rest-Wasser ergänzen, bis ein dickflüssiger Teig entsteht.","Apfel entkernen, würfeln und unterheben.","Teig auf 6 Muffinformen verteilen und ~25 Min backen.","Nur durch den Apfel leicht süß – ein süßer Apfel (Gala, Golden Delicious) passt gut."]}
     ],
     mittag: [
       {id:"m1",name:"Linsen-Dal mit Reis & Tomaten",kcal:560,protein:25,fresh:"Paprika, Zucchini, Zwiebel & Tomaten: waschen, würfeln, in 1 EL Öl ~5–8 Min anbraten.",
@@ -657,7 +665,10 @@
        steps:["Nudeln nach Packung kochen.","Zucchini, Paprika und Zwiebel waschen und schneiden.","Öl erhitzen, Zwiebel glasig dünsten, dann Zucchini & Paprika 5–8 Min anbraten.","Kichererbsen und passierte Tomaten dazugeben, 5 Min köcheln, würzen.","Mit den Nudeln vermengen."]},
       {id:"m3",name:"Kartoffel-Gemüse-Pfanne mit Tomaten",kcal:510,protein:25,fresh:"Brokkoli, Karotte, Paprika & Tomaten: waschen, in Stücke schneiden, mit den Kartoffeln in 1 EL Öl ~6–8 Min anbraten.",
        ingr:[["Kartoffeln (gekocht)","300 g"],["Brokkoli (frisch)","150 g"],["Tomaten (frisch)","2 (~200 g)"],["Karotte (frisch)","1 (~80 g)"],["Paprika (frisch)","½ (~75 g)"],["Öl","1 EL"],["Magerquark (Dip)","150 g"],["Salz, Pfeffer, Kräuter","nach Geschmack"]],
-       steps:["Gekochte Kartoffeln in Scheiben schneiden.","Brokkoli in Röschen teilen, Karotte, Paprika & Tomaten in Stücke schneiden, alles waschen.","Öl erhitzen, Kartoffeln goldbraun braten, Brokkoli, Karotte & Paprika dazu, 6–8 Min anbraten.","Tomaten in den letzten 2 Min mitbraten, damit sie noch etwas Biss behalten.","Magerquark mit Salz, Pfeffer und Kräutern zu einem Dip verrühren (alternativ 40 g Feta darüberbröseln)."]}
+       steps:["Gekochte Kartoffeln in Scheiben schneiden.","Brokkoli in Röschen teilen, Karotte, Paprika & Tomaten in Stücke schneiden, alles waschen.","Öl erhitzen, Kartoffeln goldbraun braten, Brokkoli, Karotte & Paprika dazu, 6–8 Min anbraten.","Tomaten in den letzten 2 Min mitbraten, damit sie noch etwas Biss behalten.","Magerquark mit Salz, Pfeffer und Kräutern zu einem Dip verrühren (alternativ 40 g Feta darüberbröseln)."]},
+      {id:"m4",name:"Cremige Brokkoli-Pasta",kcal:440,protein:25,fresh:"Brokkoli: waschen, in Röschen teilen und ~8 Min garen (nicht in der Pfanne).",
+       ingr:[["Nudeln (trocken)","85 g"],["Brokkoli (frisch)","130 g"],["Hüttenkäse (körniger Frischkäse)","85 g"],["Milch","35 ml"],["Salz, Pfeffer, Muskat","nach Geschmack"]],
+       steps:["Nudeln nach Packung kochen, vor dem Abgießen etwas Nudelwasser aufheben.","Brokkoli in Röschen teilen und ~8 Min garen.","Brokkoli mit Milch, körnigem Frischkäse und etwas Nudelwasser cremig pürieren, mit Salz, Pfeffer & Muskat abschmecken.","Sauce mit den Nudeln vermischen, bei Bedarf mit Nudelwasser verdünnen.","Tipp: lohnt sich als 3er-Portion – dann alles ×3 (250 g Nudeln, 400 g Brokkoli, 250 g körniger Frischkäse, 100 ml Milch)."]}
     ],
     abend: [
       {id:"a1",name:"Tofu-Gemüse-Pfanne mit Tomaten",kcal:430,protein:33,fresh:"Zucchini, Paprika, Zwiebel & Tomaten: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten.",
@@ -675,9 +686,9 @@
       {id:"a5",name:"Linsen-Tomaten-Pfanne mit Zucchini",kcal:390,protein:18,fresh:"Zucchini, Tomaten & Zwiebel: waschen, würfeln, in 1 EL Öl ~5–8 Min anbraten. (Ohne Ei, ohne Paprika)",
        ingr:[["Rote Linsen (trocken)","80 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Kreuzkümmel, Salz","nach Geschmack"],["Wasser","~200 ml"]],
        steps:["Zucchini, Tomaten und Zwiebel waschen und würfeln.","Öl erhitzen, Zwiebel glasig dünsten, Zucchini ~5 Min anbraten.","Tomaten 2–3 Min dazugeben.","Linsen, Wasser und Gewürze dazu, 12–15 Min köcheln bis weich.","Tipp: mit 150 g Magerquark dazu wird's noch eiweißreicher."]},
-      {id:"a6",name:"Hüttenkäse-Teller mit Pfannengemüse",kcal:400,protein:28,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten. (Ohne Ei, ohne Paprika)",
-       ingr:[["Hüttenkäse (körniger Frischkäse)","200 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Vollkornbrot","1 Scheibe (~50 g)"],["Salz, Pfeffer","nach Geschmack"]],
-       steps:["Zucchini, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten 2–3 Min dazu, würzen.","Gemüse auf einen Teller geben, den Hüttenkäse daneben.","Mit der Scheibe Vollkornbrot servieren."]},
+      {id:"a6",name:"Hüttenkäse-Teller mit Pfannengemüse (ohne Brot)",kcal:380,protein:29,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~5–8 Min anbraten. (Ohne Brot, Ei, Paprika)",
+       ingr:[["Hüttenkäse (körniger Frischkäse)","200 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
+       steps:["Zucchini, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten 2–3 Min dazu, würzen.","Gemüse auf einen Teller geben, den Hüttenkäse daneben – ohne Brot."]},
       {id:"a7",name:"Zucchini-Tofu-Pfanne mit Hüttenkäse",kcal:430,protein:37,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~6–8 Min anbraten. (Ohne Brot, Ei, Paprika, Brokkoli)",
        ingr:[["Tofu natur","150 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Hüttenkäse (körniger Frischkäse)","150 g"],["Öl","1 EL"],["Sojasoße","1 EL"],["Salz, Pfeffer","nach Geschmack"]],
        steps:["Tofu abtropfen und in Würfel schneiden. Zucchini, Tomaten und Zwiebel waschen und schneiden.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten 2–3 Min dazu.","Tofu zurück in die Pfanne, mit Sojasoße und Salz/Pfeffer abschmecken.","Auf einen Teller geben und den Hüttenkäse darüber oder daneben — nicht mitbraten, kommt kalt dazu."]},
@@ -698,7 +709,10 @@
        steps:["Tofu abtropfen und würfeln. Tomaten und Zwiebel schneiden, Spinat verlesen und waschen.","Öl erhitzen, Tofu rundum ~5 Min anbraten, herausnehmen.","Zwiebel & Tomaten ~4 Min anbraten, Spinat unterheben bis er zusammenfällt.","Tofu zurück in die Pfanne, mit Sojasoße abschmecken.","Auf einen Teller geben, die halbe Avocado in Scheiben darauflegen, mit einem Spritzer Limette, Salz und Pfeffer würzen."]},
       {id:"a13",name:"Zucchini-Kichererbsen-Pfanne mit Nüssen & Feta",kcal:470,protein:22,fresh:"Zucchini, Tomaten & Zwiebel: waschen, schneiden, in 1 EL Öl ~6 Min anbraten. (Ohne Brot, Ei, Paprika, Brokkoli, Pilze)",
        ingr:[["Kichererbsen (abgetropft)","150 g"],["Zucchini (frisch)","1 (~200 g)"],["Tomaten (frisch)","2 (~200 g)"],["Zwiebel (frisch)","1 (~80 g)"],["Öl","1 EL"],["Walnüsse (od. andere Nüsse)","20 g"],["Feta","40 g"],["Salz, Pfeffer","nach Geschmack"]],
-       steps:["Kichererbsen abspülen. Zucchini, Tomaten und Zwiebel waschen und schneiden.","Nüsse in der trockenen Pfanne kurz anrösten, bis sie duften, dann herausnehmen.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten und Kichererbsen 3–4 Min dazu, würzen.","Auf einen Teller geben, Feta zerbröseln und die gerösteten Nüsse darüberstreuen."]}
+       steps:["Kichererbsen abspülen. Zucchini, Tomaten und Zwiebel waschen und schneiden.","Nüsse in der trockenen Pfanne kurz anrösten, bis sie duften, dann herausnehmen.","Öl erhitzen, Zwiebel & Zucchini ~6 Min anbraten, dann Tomaten und Kichererbsen 3–4 Min dazu, würzen.","Auf einen Teller geben, Feta zerbröseln und die gerösteten Nüsse darüberstreuen."]},
+      {id:"a14",name:"Schoko-Bananen-Kuchen (½ Portion)",kcal:340,protein:14,fresh:"Ergibt 2 Portionen (ganzer Kuchen ≈ 680 kcal, hier Werte pro ½ Kuchen). Ganzer Teig: 3 Bananen, 3 Eier, 2 EL Skyr, 1 EL Honig, 2 EL Kakao. Tipp: einmal backen und z. B. Sa + Mo essen.",
+       ingr:[["Banane","1,5 (~180 g)"],["Eier","1,5 Stück"],["Skyr","15 g"],["Honig","10 g"],["Kakaopulver (ungesüßt)","5 g"]],
+       steps:["Backofen auf 180 °C Ober-/Unterhitze vorheizen.","Bananen mit der Gabel fein zerdrücken.","Eier, Skyr, Honig und Kakaopulver zugeben und alles glatt verrühren.","Masse in eine kleine, mit Backpapier ausgelegte Form füllen.","Ca. 20–25 Min backen (Stäbchenprobe). Ergibt 2 Portionen – eine Hälfte ist eine Portion (~340 kcal)."]}
     ]
   };
   var CATLABEL = {fruehstueck:"Frühstück",mittag:"Mittagessen",abend:"Abendessen"};
@@ -706,19 +720,20 @@
   var MEAL_BY_ID = {};
   ["fruehstueck","mittag","abend"].forEach(function(cat){ MEALS[cat].forEach(function(m){ MEAL_BY_ID[m.id]={cat:cat,m:m}; }); });
 
-  // Plan: startet morgen (Fr 04.09.) bis einschließlich Do 10.09. — Trainingswoche 1
+  // Plan: Woche 2 · Fr 11.09. bis Fr 18.09. (danach Urlaub, Essensplan-Pause) — Trainingswoche 2
   var SCHEDULE = [
-    {dow:"Freitag",   date:"Fr 04.09.", work:"runA",     bauch:false, bf:"f4", lu:"m2", di:"a7"},
-    {dow:"Samstag",   date:"Sa 05.09.", work:"active",   bauch:false, bf:"f1", lu:"m3", di:"a11"},
-    {dow:"Sonntag",   date:"So 06.09.", work:"restK",    bauch:false, bf:"f4", lu:"m2", di:"a12"},
-    {dow:"Montag",    date:"Mo 07.09.", work:"runA",     bauch:true,  bf:"f1", lu:"m1", di:"a13"},
-    {dow:"Dienstag",  date:"Di 08.09.", work:"walk",     bauch:false, bf:"f1", lu:"m3", di:"a7"},
-    {dow:"Mittwoch",  date:"Mi 09.09.", work:"runB",     bauch:true,  bf:"f4", lu:"m1", di:"a12"},
-    {dow:"Donnerstag",date:"Do 10.09.", work:"strength", bauch:true,  bf:"f1", lu:"m3", di:"a11"}
+    {dow:"Freitag",   date:"Fr 11.09.", work:"runA",     bauch:false, bf:"f1", lu:"extern", di:"extern"},
+    {dow:"Samstag",   date:"Sa 12.09.", work:"active",   bauch:false, bf:"f1", lu:"m2",     di:"a14"},
+    {dow:"Sonntag",   date:"So 13.09.", work:"restK",    bauch:false, bf:"f5", lu:"m4",     di:"a6"},
+    {dow:"Montag",    date:"Mo 14.09.", work:"runA",     bauch:true,  bf:"f1", lu:"m3",     di:"a14"},
+    {dow:"Dienstag",  date:"Di 15.09.", work:"walk",     bauch:false, bf:"f6", lu:"m1",     di:"a11"},
+    {dow:"Mittwoch",  date:"Mi 16.09.", work:"runB",     bauch:true,  bf:"f1", lu:"m3",     di:"a6"},
+    {dow:"Donnerstag",date:"Do 17.09.", work:"strength", bauch:true,  bf:"f1", lu:"m3",     di:"a13"},
+    {dow:"Freitag",   date:"Fr 18.09.", work:"runA",     bauch:false, bf:"f1", lu:null,     di:null, note:"Ab hier Urlaub – Essensplan-Pause 🌴"}
   ];
   function workMeta(k){
     switch(k){
-      case "runA":     return {label:"Lauf A · 2,0 km locker",    tab:"plan",     tag:"run",   tagText:"Lauf A",     chip:"sport",       banana:true};
+      case "runA":     return {label:"Lauf A · 2,5 km locker",    tab:"plan",     tag:"run",   tagText:"Lauf A",     chip:"sport",       banana:true};
       case "runB":     return {label:"Lauf B · Intervalle",       tab:"plan",     tag:"speed", tagText:"Intervalle", chip:"sport speed", banana:true};
       case "strength": return {label:"Kraftzirkel ohne Geräte",   tab:"training", tag:"run",   tagText:"Kraft",      chip:"sport",       banana:true};
       case "restK":    return {label:"Ruhe oder leichte Kraft",   tab:"training", tag:"rest",  tagText:"Ruhe",       chip:"",            banana:false};
@@ -728,19 +743,20 @@
   }
 
   /* ---------- STATE ---------- */
-  // Plan-Fenster: Fr 04.09.2026 (Index 0) bis Do 10.09.2026 (Index 6)
-  var PLAN_START = new Date(2026,8,4);
+  // Plan-Fenster: Fr 11.09.2026 (Index 0) bis Fr 18.09.2026 (Index 7)
+  var PLAN_START = new Date(2026,8,11);
+  var PLAN_LAST = 7;
   function planTodayIdx(){
     var n=new Date(); n.setHours(0,0,0,0);
     var diff=Math.round((n-PLAN_START)/86400000);
-    if(diff<0) return 0; if(diff>6) return 6; return diff;
+    if(diff<0) return 0; if(diff>PLAN_LAST) return PLAN_LAST; return diff;
   }
   function isWithinPlan(){
     var n=new Date(); n.setHours(0,0,0,0);
     var diff=Math.round((n-PLAN_START)/86400000);
-    return diff>=0 && diff<=6;
+    return diff>=0 && diff<=PLAN_LAST;
   }
-  var state = { view:"heute", day:planTodayIdx(), week:1 };
+  var state = { view:"heute", day:planTodayIdx(), week:2 };
   try{ var w=parseInt(localStorage.getItem("nico_week"),10); if(w>=1&&w<=8) state.week=w; }catch(e){}
 
   var $ = function(s,r){return (r||document).querySelector(s);};
@@ -798,7 +814,7 @@
     var d=SCHEDULE[state.day], wm=workMeta(d.work), out=$("#today-out");
     var icon,cls,body;
     switch(d.work){
-      case "runA": cls="k-runA"; icon="🏃"; body='<p><strong>2,0 km</strong> am Stück locker durchlaufen (~9–10&nbsp;km/h). Vorher 5 Min Warm-up, danach 3 Min auslaufen.</p>'; break;
+      case "runA": cls="k-runA"; icon="🏃"; body='<p><strong>2,5 km</strong> am Stück locker durchlaufen (~9–10&nbsp;km/h). Vorher 5 Min Warm-up, danach 3 Min auslaufen.</p>'; break;
       case "runB": cls="k-runB"; icon="⚡"; body='<p>Intervall-Einheit — Ablauf im Tab „Wochenplan“ (Einheit B). Vorher 5 Min Warm-up.</p>'; break;
       case "strength": cls="k-strength"; icon="💪"; body='<p><strong>2–3 Runden</strong> des Kraftzirkels. Alle Übungen im Tab „Kraft &amp; Bauch“.</p>'; break;
       case "restK": cls="k-rest"; icon="🌙"; body='<p>Erholung. Wenn du magst, ein leichter Kraftzirkel (1 Runde) — sonst einfach entspannen. Regeneration macht dich stärker.</p>'; break;
@@ -806,7 +822,7 @@
       default: cls="k-active"; icon="🚲"; body='<p>Spaziergang oder eine lockere Radrunde. Ziel: aktiv bleiben, Richtung 8.000–10.000 Schritte.</p>';
     }
     var pills='<div style="margin-top:6px">'
-      + '<span class="pill">Trainingswoche 1 / 8</span>'
+      + '<span class="pill">Trainingswoche 2 / 8</span>'
       + (wm.banana?'<span class="pill">🍌 Banane vor dem Sport</span>':'')
       + (d.bauch?'<span class="pill b">+ Bauch-Block (~8–10 Min)</span>':'')
       + '</div>';
@@ -832,13 +848,26 @@
   function renderTodayMeals(){
     var d=SCHEDULE[state.day], wrap=$("#today-meals"); wrap.innerHTML="";
     [["Morgens","fruehstueck",d.bf],["Mittags","mittag",d.lu],["Abends","abend",d.di]].forEach(function(row){
-      var ref=MEAL_BY_ID[row[2]];
+      var val=row[2];
+      if(!val) return; // keine Mahlzeit geplant (z.B. Urlaub)
       var col=document.createElement("div"); col.className="mcat";
       col.innerHTML='<div class="when">'+row[0]+'</div><h4>'+CATLABEL[row[1]]+'</h4>';
       var list=document.createElement("div"); list.className="optlist";
-      list.appendChild(optBtn(ref.cat,ref.m));
+      if(val==="extern"){
+        var ext=document.createElement("div"); ext.className="optbtn extern";
+        ext.innerHTML='<span class="oname">Auswärts essen 🍽️</span>';
+        list.appendChild(ext);
+      } else {
+        var ref=MEAL_BY_ID[val];
+        list.appendChild(optBtn(ref.cat,ref.m));
+      }
       col.appendChild(list); wrap.appendChild(col);
     });
+    if(d.note){
+      var n=document.createElement("div"); n.className="mcat"; n.style.gridColumn="1 / -1";
+      n.innerHTML='<p class="cl-empty" style="font-size:1rem">'+d.note+'</p>';
+      wrap.appendChild(n);
+    }
   }
   function renderErnaehrungLists(){
     $$(".optlist[data-cat]").forEach(function(list){
@@ -894,22 +923,30 @@
   }
 
   /* ---------- ÜBERSICHT ---------- */
+  function mealRow(label, val){
+    if(!val) return '';
+    var inner;
+    if(val==="extern"){ inner='<span class="mealchip extern">Auswärts (bei Oma) 🍽️</span>'; }
+    else { var ref=MEAL_BY_ID[val]; inner='<button class="mealchip" data-meal="'+val+'">'+ref.m.name+' <span class="arw">›</span></button>'; }
+    return '<div class="srow"><span class="rk">'+label+'</span><span class="rc">'+inner+'</span></div>';
+  }
   function renderSchedule(){
     var wrap=$("#uebersicht-out"); wrap.innerHTML="";
     SCHEDULE.forEach(function(d){
       var wm=workMeta(d.work);
-      var bf=MEAL_BY_ID[d.bf], lu=MEAL_BY_ID[d.lu], di=MEAL_BY_ID[d.di];
       var sportLabel=wm.label+(d.bauch?" + Bauch":"");
       var banana=wm.banana?'🍌 1 Banane, dann ':'';
       var sportChip='<button class="linkchip '+wm.chip+'" data-goto="'+wm.tab+'">'+sportLabel+' <span class="arw">›</span></button>';
+      var noteRow=d.note?'<div class="srow"><span class="rk">Hinweis</span><span class="rc"><span class="mealchip extern">'+d.note+'</span></span></div>':'';
       var card=document.createElement("div"); card.className="sday";
       card.innerHTML=
         '<div class="shead"><span class="dow">'+d.dow+'</span><span class="dt">'+d.date+'</span><span class="wtag '+wm.tag+'">'+wm.tagText+'</span></div>'
         +'<div class="sbody">'
           +'<div class="srow"><span class="rk">Morgens</span><span class="rc">'+banana+sportChip+'</span></div>'
-          +'<div class="srow"><span class="rk">Frühstück</span><span class="rc"><button class="mealchip" data-meal="'+d.bf+'">'+bf.m.name+' <span class="arw">›</span></button></span></div>'
-          +'<div class="srow"><span class="rk">Mittagessen</span><span class="rc"><button class="mealchip" data-meal="'+d.lu+'">'+lu.m.name+' <span class="arw">›</span></button></span></div>'
-          +'<div class="srow"><span class="rk">Abendessen</span><span class="rc"><button class="mealchip" data-meal="'+d.di+'">'+di.m.name+' <span class="arw">›</span></button></span></div>'
+          +mealRow("Frühstück",d.bf)
+          +mealRow("Mittagessen",d.lu)
+          +mealRow("Abendessen",d.di)
+          +noteRow
         +'</div>';
       wrap.appendChild(card);
     });
@@ -975,6 +1012,7 @@
     "Tomate (frisch)":"Tomaten (frisch)",
     "Magerquark (Dip)":"Magerquark",
     "Walnüsse (od. andere Nüsse)":"Nüsse",
+    "Ei":"Eier",
     "Salz, Pfeffer":"Salz, Pfeffer, Kräuter",
     "Kräuter, Salz":"Salz, Pfeffer, Kräuter",
     "Currypulver, Salz":"Currypulver",
@@ -1006,7 +1044,8 @@
         else { if(a.raw.indexOf(pa.text)<0) a.raw.push(pa.text); }
       });
     }
-    SCHEDULE.forEach(function(d){ add(MEAL_BY_ID[d.bf].m.ingr); add(MEAL_BY_ID[d.lu].m.ingr); add(MEAL_BY_ID[d.di].m.ingr); });
+    var mealCount=0;
+    SCHEDULE.forEach(function(d){ [d.bf,d.lu,d.di].forEach(function(id){ if(id && MEAL_BY_ID[id]){ add(MEAL_BY_ID[id].m.ingr); mealCount++; } }); });
     var items=order.map(function(name){
       var a=agg[name], parts=[];
       if(a.count>0){ parts.push(fmtNum(a.count)+" "+plural(a.word,a.count)+(a.hint>0?" (~"+fmtNum(a.hint)+" "+a.hintUnit+")":"")); }
@@ -1015,7 +1054,7 @@
       if(!parts.length && a.note) parts.push("nach Geschmack");
       return {name:name, amount:parts.join(" + ")};
     });
-    renderCheckList($("#weekshop-out"), items, "nico_have_week", "Wochen-Einkaufsliste · "+p+" "+(p===1?"Person":"Personen")+" · 21 Mahlzeiten (Fr–Do)");
+    renderCheckList($("#weekshop-out"), items, "nico_have_week", "Wochen-Einkaufsliste · "+p+" "+(p===1?"Person":"Personen")+" · "+mealCount+" gekochte Mahlzeiten (Fr 11.–Fr 18.09.)");
   }
 
   /* ---------- INIT ---------- */
