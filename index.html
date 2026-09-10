@@ -255,6 +255,17 @@
   .check-list.have .ci-name{text-decoration:line-through;color:var(--muted)}
   .check-list.have .ci-amt{color:var(--muted)}
   .cl-empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+  .kcal-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:6px}
+  .kcal-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .kcal-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.9rem;color:var(--ink);font-variant-numeric:tabular-nums}
+  .kcal-big small{font-size:.85rem;font-weight:600;color:var(--muted)}
+  .kcal-goal{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .kcal-bar{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin:12px 0 10px}
+  .kcal-bar > span{display:block;height:100%;background:var(--pine);border-radius:999px}
+  .kcal-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.86rem}
+  .kcal-chip{background:var(--surface-2);border-radius:999px;padding:4px 11px;font-weight:500}
+  .kcal-chip.warn{background:var(--amber-soft);color:var(--amber)}
+  .kcal-chip.prot{background:var(--pine-soft);color:var(--pine)}
   .optbtn.extern,.mealchip.extern{cursor:default;background:var(--surface-2);color:var(--muted);border-style:dashed;font-weight:500}
   .optbtn.extern:hover,.mealchip.extern:hover{transform:none;border-color:var(--line);color:var(--muted)}
 
@@ -364,6 +375,7 @@
     </div>
 
     <div id="today-out"></div>
+    <div id="today-kcal"></div>
 
     <div class="mealrow">
       <p class="label">Dein Essen an diesem Tag — tippe für das Rezept (weitere Optionen im Tab „Ernährung“)</p>
@@ -835,6 +847,7 @@
       +'<div class="head"><div><div class="kicker">'+d.dow+' '+d.date.split(" ")[1]+' · '+wm.tagText+'</div><h3>'+wm.label+(d.bauch?' + Bauch':'')+'</h3></div><div class="ic">'+icon+'</div></div>'
       +'<div class="body">'+body+pills+link+'</div></div>';
     renderTodayMeals();
+    renderTodayKcal();
   }
 
   /* ---------- MEALS (Heute quick + Ernährung) ---------- */
@@ -868,6 +881,32 @@
       n.innerHTML='<p class="cl-empty" style="font-size:1rem">'+d.note+'</p>';
       wrap.appendChild(n);
     }
+  }
+
+  var TARGET_KCAL = 2400;
+  function renderTodayKcal(){
+    var d=SCHEDULE[state.day], out=$("#today-kcal");
+    var kcal=0, prot=0, extern=0, has=false;
+    [d.bf,d.lu,d.di].forEach(function(id){
+      if(!id) return;
+      if(id==="extern"){ extern++; return; }
+      var ref=MEAL_BY_ID[id]; if(ref){ kcal+=ref.m.kcal||0; prot+=ref.m.protein||0; has=true; }
+    });
+    if(!has && !extern){ out.innerHTML=""; return; }
+    var pct=Math.max(3,Math.min(Math.round(kcal/TARGET_KCAL*100),100));
+    var remaining=TARGET_KCAL-kcal;
+    var diffChip = remaining>0
+      ? '<span class="kcal-chip warn">noch ~'+remaining+' kcal über Snacks/Beilagen</span>'
+      : '<span class="kcal-chip warn">~'+(-remaining)+' kcal über dem Ziel</span>';
+    out.innerHTML=
+      '<div class="kcal-card">'
+      +'<div class="kcal-top"><div class="kcal-big">'+kcal+' <small>kcal aus Mahlzeiten</small></div>'
+      +'<div class="kcal-goal">Ziel ~'+TARGET_KCAL+' kcal</div></div>'
+      +'<div class="kcal-bar"><span style="width:'+pct+'%"></span></div>'
+      +'<div class="kcal-meta">'+diffChip
+      +'<span class="kcal-chip prot">Eiweiß ~'+prot+' g</span>'
+      +(extern?'<span class="kcal-chip">+ '+extern+'× auswärts (nicht gerechnet)</span>':'')
+      +'</div></div>';
   }
   function renderErnaehrungLists(){
     $$(".optlist[data-cat]").forEach(function(list){
