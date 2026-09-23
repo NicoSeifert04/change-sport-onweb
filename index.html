@@ -369,7 +369,7 @@
 
     <div class="picker">
       <div>
-        <span class="label">Tag im Plan wählen · Fr 11.09. – Fr 18.09.</span>
+        <span class="label">Tag im Plan wählen · Mi 23.09. – Do 01.10.</span>
         <div class="days" id="day-picker"></div>
       </div>
     </div>
@@ -385,7 +385,7 @@
 
   <!-- ============ ÜBERSICHT ============ -->
   <div class="view" id="view-uebersicht" role="tabpanel" hidden>
-    <span class="eyebrow">Dein Ablauf · Woche 2 · Fr 11.09. – Fr 18.09.</span>
+    <span class="eyebrow">Dein Ablauf · Woche 3 · Mi 23.09. – Do 01.10.</span>
     <h2 class="sec">Große Übersicht</h2>
     <p class="lead">Dein kompletter Tagesablauf für die kommende Woche: morgens Banane und Sport, dann die drei Mahlzeiten. Tippe die <strong>Sport-Einheit</strong> an, um zu den Details zu springen, oder eine <strong>Mahlzeit</strong> für das Rezept. Mittag- &amp; Abendessen sind Vorschläge — frei tauschbar.</p>
     <div class="sched" id="uebersicht-out"></div>
@@ -567,9 +567,9 @@
     <p class="lead">Hake ab, was du schon zu Hause hast — abgehakte Zutaten rutschen automatisch nach unten unter „Schon vorhanden". Oben bleibt übersichtlich, was du noch besorgen musst. Deine Haken werden auf diesem Gerät gespeichert.</p>
 
     <section class="block" id="weekshop" style="margin-top:0">
-      <span class="eyebrow">Woche 2 · Fr 11.09. – Fr 18.09.</span>
+      <span class="eyebrow">Einkauf · Fr 25.09. – Do 01.10.</span>
       <h2 class="sec" style="font-size:1.5rem">Ganze Woche</h2>
-      <p class="lead">Alle Zutaten für Frühstück, Mittag- und Abendessen der Woche, automatisch zusammengezählt.</p>
+      <p class="lead">Alle Zutaten ab Freitag, automatisch zusammengezählt. Heute (Mi) &amp; morgen (Do) sind schon da und nicht mit drin.</p>
       <div class="card">
         <div class="shop-controls">
           <label>Personen<input id="weekshop-persons" type="number" min="1" max="20" value="1"></label>
@@ -732,16 +732,17 @@
   var MEAL_BY_ID = {};
   ["fruehstueck","mittag","abend"].forEach(function(cat){ MEALS[cat].forEach(function(m){ MEAL_BY_ID[m.id]={cat:cat,m:m}; }); });
 
-  // Plan: Woche 2 · Fr 11.09. bis Fr 18.09. (danach Urlaub, Essensplan-Pause) — Trainingswoche 2
+  // Plan: Woche 3 · Mi 23.09. bis Do 01.10. — Training wie Woche 2 (2,5 km). Sonntag Geburtstag.
   var SCHEDULE = [
-    {dow:"Freitag",   date:"Fr 11.09.", work:"runA",     bauch:false, bf:"f1", lu:"extern", di:"extern"},
-    {dow:"Samstag",   date:"Sa 12.09.", work:"active",   bauch:false, bf:"f1", lu:"m2",     di:"a14"},
-    {dow:"Sonntag",   date:"So 13.09.", work:"restK",    bauch:false, bf:"f5", lu:"m4",     di:"a6"},
-    {dow:"Montag",    date:"Mo 14.09.", work:"runA",     bauch:true,  bf:"f1", lu:"m3",     di:"a14"},
-    {dow:"Dienstag",  date:"Di 15.09.", work:"walk",     bauch:false, bf:"f6", lu:"m1",     di:"a11"},
-    {dow:"Mittwoch",  date:"Mi 16.09.", work:"runB",     bauch:true,  bf:"f1", lu:"m3",     di:"a6"},
-    {dow:"Donnerstag",date:"Do 17.09.", work:"strength", bauch:true,  bf:"f1", lu:"m3",     di:"a13"},
-    {dow:"Freitag",   date:"Fr 18.09.", work:"runA",     bauch:false, bf:"f1", lu:null,     di:null, note:"Ab hier Urlaub – Essensplan-Pause 🌴"}
+    {dow:"Mittwoch",  date:"Mi 23.09.", work:"runB",     bauch:true,  bf:"f1",     lu:"m1",     di:"a7"},
+    {dow:"Donnerstag",date:"Do 24.09.", work:"strength", bauch:true,  bf:"f1",     lu:"m2",     di:"a11"},
+    {dow:"Freitag",   date:"Fr 25.09.", work:"runA",     bauch:false, bf:"f1",     lu:"m1",     di:"a8"},
+    {dow:"Samstag",   date:"Sa 26.09.", work:"active",   bauch:false, bf:"f1",     lu:"m4",     di:"a1"},
+    {dow:"Sonntag",   date:"So 27.09.", work:"restK",    bauch:false, bf:"extern", lu:"extern", di:"a6", note:"Geburtstag – vormittags & mittags auswärts, abends nur ein kleines Essen"},
+    {dow:"Montag",    date:"Mo 28.09.", work:"runA",     bauch:true,  bf:"f1",     lu:"m1",     di:"a4"},
+    {dow:"Dienstag",  date:"Di 29.09.", work:"walk",     bauch:false, bf:"f1",     lu:"m2",     di:"a13"},
+    {dow:"Mittwoch",  date:"Mi 30.09.", work:"runB",     bauch:true,  bf:"f1",     lu:"m3",     di:"a7"},
+    {dow:"Donnerstag",date:"Do 01.10.", work:"strength", bauch:true,  bf:"f1",     lu:"m4",     di:"a1"}
   ];
   function workMeta(k){
     switch(k){
@@ -755,9 +756,9 @@
   }
 
   /* ---------- STATE ---------- */
-  // Plan-Fenster: Fr 11.09.2026 (Index 0) bis Fr 18.09.2026 (Index 7)
-  var PLAN_START = new Date(2026,8,11);
-  var PLAN_LAST = 7;
+  // Plan-Fenster: Mi 23.09.2026 (Index 0) bis Do 01.10.2026 (Index 8)
+  var PLAN_START = new Date(2026,8,23);
+  var PLAN_LAST = 8;
   function planTodayIdx(){
     var n=new Date(); n.setHours(0,0,0,0);
     var diff=Math.round((n-PLAN_START)/86400000);
@@ -965,7 +966,7 @@
   function mealRow(label, val){
     if(!val) return '';
     var inner;
-    if(val==="extern"){ inner='<span class="mealchip extern">Auswärts (bei Oma) 🍽️</span>'; }
+    if(val==="extern"){ inner='<span class="mealchip extern">Auswärts 🍽️</span>'; }
     else { var ref=MEAL_BY_ID[val]; inner='<button class="mealchip" data-meal="'+val+'">'+ref.m.name+' <span class="arw">›</span></button>'; }
     return '<div class="srow"><span class="rk">'+label+'</span><span class="rc">'+inner+'</span></div>';
   }
@@ -1083,8 +1084,8 @@
         else { if(a.raw.indexOf(pa.text)<0) a.raw.push(pa.text); }
       });
     }
-    var mealCount=0;
-    SCHEDULE.forEach(function(d){ [d.bf,d.lu,d.di].forEach(function(id){ if(id && MEAL_BY_ID[id]){ add(MEAL_BY_ID[id].m.ingr); mealCount++; } }); });
+    var mealCount=0, SHOP_FROM=2; // heute (Mi) & morgen (Do) sind schon da → erst ab Freitag einkaufen
+    SCHEDULE.slice(SHOP_FROM).forEach(function(d){ [d.bf,d.lu,d.di].forEach(function(id){ if(id && MEAL_BY_ID[id]){ add(MEAL_BY_ID[id].m.ingr); mealCount++; } }); });
     var items=order.map(function(name){
       var a=agg[name], parts=[];
       if(a.count>0){ parts.push(fmtNum(a.count)+" "+plural(a.word,a.count)+(a.hint>0?" (~"+fmtNum(a.hint)+" "+a.hintUnit+")":"")); }
@@ -1093,7 +1094,7 @@
       if(!parts.length && a.note) parts.push("nach Geschmack");
       return {name:name, amount:parts.join(" + ")};
     });
-    renderCheckList($("#weekshop-out"), items, "nico_have_week", "Wochen-Einkaufsliste · "+p+" "+(p===1?"Person":"Personen")+" · "+mealCount+" gekochte Mahlzeiten (Fr 11.–Fr 18.09.)");
+    renderCheckList($("#weekshop-out"), items, "nico_have_week", "Wochen-Einkaufsliste · "+p+" "+(p===1?"Person":"Personen")+" · "+mealCount+" gekochte Mahlzeiten (Fr 25.09.–Do 01.10.)");
   }
 
   /* ---------- INIT ---------- */
